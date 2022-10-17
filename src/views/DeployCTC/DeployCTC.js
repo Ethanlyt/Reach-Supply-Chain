@@ -2,15 +2,19 @@ import React, {useState} from 'react'
 import { useNavigate } from "react-router-dom"
 import { Typography, Button, TextField } from "@mui/material";
 
+import Loading from '../components/Loading'
+
 export default function DeployCTC () {
     const navigate = useNavigate()
 
-    const {isSubmit, setIsSubmit} = useState(true)
+    const [isSubmit, setIsSubmit] = useState(true)
+    const [ctcInfo, setCtcInfo] = useState('')
+
+    
 
     const handleSubmitDeploy = () => {
         setIsSubmit(false)
-
-
+        navigate('/home/detail')
     }
 
     return  <>
@@ -40,9 +44,11 @@ export default function DeployCTC () {
                 onClick={handleSubmitDeploy}
             >
                 Deploy Contract
-            </Button>
+            </Button> 
             :
-            <h3>Deploying Contreact ... Please wait</h3>
+            <div className="text-center"> 
+                <Loading message="Deploying Contract ..." />
+            </div>
             }
 
         </div>    
