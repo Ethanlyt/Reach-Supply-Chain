@@ -6,6 +6,8 @@ import Loading from "./components/Loading";
 import AppContext from "../context/AppContext";
 import SnackbarContext from "../context/SnackbarContext";
 
+
+
 const reach = loadStdlib(process.env);
 
 
@@ -29,6 +31,7 @@ export default function ConnectAccount() {
                 showSuccessToast("Account successfully connected: " + acc.getAddress() );
                 setAccount(acc);
                 // TODO: Move to main menu screen
+                navigate('/home')
             } 
             catch (err) {
                 setError({ title: 'Error connecting account', detail: err.message || "Unable to connect to your wallet" });
