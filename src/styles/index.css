@@ -1,6 +1,3 @@
 body {
-    background-image: linear-gradient(180deg, blue, red);
-    background-size: cover;
-    height: 500px;
-    position: relative;
+    background: linear-gradient(135deg, #f4f4f455 25%, transparent 25%) -40px 0/ 80px 80px, linear-gradient(225deg, #f4f4f4 25%, transparent 25%) -40px 0/ 80px 80px, linear-gradient(315deg, #f4f4f455 25%, transparent 25%) 0px 0/ 80px 80px, linear-gradient(45deg, #f4f4f4 25%, #ffffff 25%) 0px 0/ 80px 80px;
 }
