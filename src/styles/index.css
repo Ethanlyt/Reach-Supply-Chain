@@ -1,5 +1,6 @@
 body {
-    background-image:  linear-gradient(30deg, #f4f4f4 12%, transparent 12.5%, transparent 87%, #f4f4f4 87.5%, #f4f4f4), linear-gradient(150deg, #f4f4f4 12%, transparent 12.5%, transparent 87%, #f4f4f4 87.5%, #f4f4f4), linear-gradient(30deg, #f4f4f4 12%, transparent 12.5%, transparent 87%, #f4f4f4 87.5%, #f4f4f4), linear-gradient(150deg, #f4f4f4 12%, transparent 12.5%, transparent 87%, #f4f4f4 87.5%, #f4f4f4), linear-gradient(60deg, #f4f4f477 25%, transparent 25.5%, transparent 75%, #f4f4f477 75%, #f4f4f477), linear-gradient(60deg, #f4f4f477 25%, transparent 25.5%, transparent 75%, #f4f4f477 75%, #f4f4f477);
-    background-size: 80px 140px;
-    background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+    background-image: linear-gradient(180deg, blue, red);
+    background-size: cover;
+    height: 500px;
+    position: relative;
 }
