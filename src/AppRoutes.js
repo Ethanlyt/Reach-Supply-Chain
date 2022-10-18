@@ -25,11 +25,11 @@ export default function AppRoutes() {
         <Route path="/home/deploy" element={<DeployCTC />} />
         <Route path="/home/detail" element={<ContractDetail />} />
         <Route path="/home/attach" element={<Order />} />
-        <Route path="/home/view" element={<Home />} />
+
 
         <Route path="error" element={<Error />} />
 
-        <Route path='view'>
+        <Route path='/view'>
             <Route path='attach' element={ <ViewAttach />} />
             <Route path=':ctcInfo' element={ <Viewer />} />
         </Route>

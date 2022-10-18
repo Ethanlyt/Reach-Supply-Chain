@@ -1,27 +1,27 @@
 import { Typography, ButtonGroup, Button, Link } from "@mui/material";
-import React from 'react'
+import React, {useContext} from 'react'
 import {useNavigate} from 'react-router-dom'
 import Title from './components/Title'
-
+import AppContext from "../context/AppContext";
+import AccountDetails from "./components/AccountDetails";
 
 export default function Home() {
     const navigate = useNavigate()
+    const {account} = useContext(AppContext)
 
     const handleDeploy = () => {
-
         navigate("/home/deploy")
     }
     const handleAttach = () => {
-
         navigate("/home/attach")
     }
     const handleView = () => {
-
-        navigate("/home/view")
+        navigate("/view")
     }
 
     return <>
         <Title />
+        <AccountDetails />
         <hr />
         <div className="d-flex flex-column">
             <Button

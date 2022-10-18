@@ -7,6 +7,7 @@ import Loading from '../components/Loading'
 import ContractContext from '../../context/ContractContext';
 import AppContext from '../../context/AppContext';
 import SnackbarContext from '../../context/SnackbarContext';
+import AccountDetails from '../components/AccountDetails';
 
 import {deployContract} from '../../Util'
 
@@ -28,6 +29,7 @@ export default function DeployCTC () {
     } = useContext(SnackbarContext)
 
     const handleSubmitDeploy = () => {
+        if(ingredient === "" || sellerAddress === "") return showErrorToast("Please fill in the required information")
         // if (!account || contract) return showErrorToast("Error Occured")
 
         setIsSubmit(false)
@@ -49,10 +51,12 @@ export default function DeployCTC () {
 
     return  <>
         <Title />
+        <AccountDetails />
         <span>Deploy New Contract</span>
         <br />
         <div className="d-flex flex-column">
             <TextField
+                required
                 label="Ingredient Name"
                 rows={1}
                 variant="filled"
@@ -62,6 +66,7 @@ export default function DeployCTC () {
             />
             <br />
             <TextField
+                required
                 label="Seller Address"
                 multiline
                 rows={4}
