@@ -1,6 +1,7 @@
 import { Typography, ButtonGroup, Button, Link } from "@mui/material";
 import React from 'react'
 import {useNavigate} from 'react-router-dom'
+import Title from './components/Title'
 
 
 export default function Home() {
@@ -20,7 +21,7 @@ export default function Home() {
     }
 
     return <>
-        <h1><b>FOOD SAFETY</b></h1>
+        <Title />
         <hr />
         <div className="d-flex flex-column">
             <Button

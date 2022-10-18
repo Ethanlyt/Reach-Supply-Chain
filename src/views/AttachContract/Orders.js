@@ -1,12 +1,15 @@
 import Loading from "../components/Loading"
 import { Button, Card, Typography, CardContent } from "@mui/material"
-
+import Title from '../components/Title'
 export default function Order () {
 
     
 
     return<>
+        <Title />
+        <h3><i>You are <strong>Seller</strong></i></h3>
 
+        
         <Loading message="Displaying contract..." />
 
         <Card sx={{ minWidth: 675 }}>

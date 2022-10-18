@@ -1,24 +1,54 @@
-import React, {useState} from 'react'
+import React, {useState, useContext, useEffect} from 'react'
 import { useNavigate } from "react-router-dom"
-import { Typography, Button, TextField } from "@mui/material";
+import { Typography, Button, TextField } from "@mui/material"; 
 
+import Title from '../components/Title'
 import Loading from '../components/Loading'
+import ContractContext from '../../context/ContractContext';
+import AppContext from '../../context/AppContext';
+import SnackbarContext from '../../context/SnackbarContext';
+
+import {deployContract} from '../../Util'
 
 export default function DeployCTC () {
     const navigate = useNavigate()
+    const [ingredient, setIngredient] = useState("")
+    const [sellerAddress, setSellerAddress] = useState("")
 
     const [isSubmit, setIsSubmit] = useState(true)
-    const [ctcInfo, setCtcInfo] = useState('')
 
-    
+    const {
+        contract, setContract
+    } = useContext(ContractContext)
+    const {
+        account
+    } = useContext(AppContext)
+    const {
+        showErrorToast
+    } = useContext(SnackbarContext)
 
     const handleSubmitDeploy = () => {
+        // if (!account || contract) return showErrorToast("Error Occured")
+
         setIsSubmit(false)
-        navigate('/home/detail')
+        const ctc = deployContract(account)
+        setContract(ctc)
+
+        
+        navigate('/home/detail',{
+            state:{
+                ingredient: ingredient,
+                sellerAddress: sellerAddress,
+            }
+        })
     }
 
+    useEffect( () => {
+        if (!account) navigate('/')
+    }, [account, navigate])
+
     return  <>
-        <h1>Buyer</h1>
+        <Title />
         <span>Deploy New Contract</span>
         <br />
         <div className="d-flex flex-column">
@@ -27,6 +57,8 @@ export default function DeployCTC () {
                 rows={1}
                 variant="filled"
                 sx={{ minWidth: '400px', maxWidth: '700px' }}
+                value={ingredient}
+                onChange={(e) => setIngredient(e.target.value)}
             />
             <br />
             <TextField
@@ -35,6 +67,8 @@ export default function DeployCTC () {
                 rows={4}
                 variant="filled"
                 sx={{ minWidth: '400px', maxWidth: '700px' }}
+                value={sellerAddress}
+                onChange={(e) => setSellerAddress(e.target.value)}
             />
             <br /><br />
 

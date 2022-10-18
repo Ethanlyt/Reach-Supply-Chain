@@ -26,7 +26,11 @@ function ContractContextProvider({ children }) {
 
 
     // Put exposed states here
-    const state = { contract, setContract, accept, reject, confirmReceive };
+    const state = { 
+        contract, setContract, 
+        accept, 
+        reject,
+        confirmReceive };
 
 
     return (
