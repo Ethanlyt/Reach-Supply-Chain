@@ -34,3 +34,10 @@ export function parseCurrency(amount) {
 export async function getBalance(account) {
     return formatCurrency(await stdlib.balanceOf(account) );
 }
+
+
+
+export async function getContractHandler(account, ctcInfo) {
+    if (!account) return await stdlib.contract(backend, ctcInfo);
+    return account.contract( backend, ctcInfo );
+}
