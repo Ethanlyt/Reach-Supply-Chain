@@ -2,7 +2,8 @@ import React,{useState} from 'react'
 import { Typography, Card, CardContent, Button } from "@mui/material";
 
 export default function ContractDetail () {
-    const [ingredient, setIngredient] = useState("rrrr")
+    const [] = useState();
+
     return <>
         <h1>Buyer</h1>
         <span clas>Deploy New Contract</span>
