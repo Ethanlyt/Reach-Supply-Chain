@@ -20,13 +20,17 @@ function ContractContextProvider({ children }) {
     }, [contract]);
 
     const confirmReceive = useCallback(async ()=> {
-        return await contract.a.Buyer.confirmReceive();
+    return await contract.a.Buyer.confirmReceive();
     }, [contract]);
 
 
 
     // Put exposed states here
-    const state = { contract, setContract, accept, reject, confirmReceive };
+    const state = { 
+        contract, setContract, 
+        accept, 
+        reject,
+        confirmReceive };
 
 
     return (
