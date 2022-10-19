@@ -1,8 +1,9 @@
 import React from "react";
-import { Drawer, IconButton, Typography, Divider } from "@mui/material";
+import { Drawer, IconButton, Typography, Divider, Fab } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 
 
 export const DrawerHeader = styled('div')(({ theme }) => ({
@@ -13,7 +14,27 @@ export const DrawerHeader = styled('div')(({ theme }) => ({
     ...theme.mixins.toolbar,
     justifyContent: 'flex-end',
 }));
-  
+
+
+
+export function FloatingActionButtonDrawerToggle({ children, onClick, label }) {
+    return <>
+        <Fab 
+            variant="extended"
+            onClick={ onClick }
+            color='primary'
+            className='my-2'
+            sx={{
+                position: 'fixed',
+                bottom: '20px',
+                right: '20px',
+            }}
+        >
+            <FormatListBulletedIcon sx={{ mr: 1 }} /> 
+            { label }
+        </Fab>
+    </>
+}
 
 
 export function ToggleDrawer({ children, isOpen, setIsOpen, title }) {
@@ -23,11 +44,7 @@ export function ToggleDrawer({ children, isOpen, setIsOpen, title }) {
             variant="temporary"
             open={isOpen}
             onClose={()=> setIsOpen(false)}
-            // ModalProps={{ keepMounted: true }}
-            sx={{
-                // display: { xs: 'block', sm: 'none' },
-                '& .MuiDrawer-paper': { boxSizing: 'border-box', minWidth: 280, maxWidth: 400 },
-            }}
+            sx={{ '& .MuiDrawer-paper': { boxSizing: 'border-box', minWidth: 280, maxWidth: 400 }, }}
         >
             
             <DrawerHeader>
@@ -40,7 +57,7 @@ export function ToggleDrawer({ children, isOpen, setIsOpen, title }) {
                 </IconButton>
             </DrawerHeader>
             
-            <Divider variant="middle" sx={{ my: 1 }} />
+            <Divider variant="middle" />
 
             {children}
         </Drawer>

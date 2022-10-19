@@ -12,6 +12,8 @@ import ConnectAccount from "./views/ConnectAccount";
 import ViewAttach from "./views/ViewContract/ViewAttach";
 import Viewer from "./views/ViewContract/Viewer";
 
+import TestDeploy from "./views/test/TestDeploy";
+
 
 
 export default function AppRoutes() {
@@ -23,6 +25,10 @@ export default function AppRoutes() {
         <Route path='view'>
             <Route path='attach' element={ <ViewAttach />} />
             <Route path=':ctcInfo' element={ <Viewer />} />
+        </Route>
+
+        <Route path="test">
+            <Route path="deploy" element={ <TestDeploy /> } />
         </Route>
 
         <Route path='*' element={<NotFound />} />
