@@ -20,7 +20,7 @@ function ContractContextProvider({ children }) {
     }, [contract]);
 
     const confirmReceive = useCallback(async ()=> {
-        return await contract.a.Buyer.confirmReceive();
+    return await contract.a.Buyer.confirmReceive();
     }, [contract]);
 
 

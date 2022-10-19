@@ -37,7 +37,7 @@ export default function DeployCTC () {
         setContract(ctc)
 
         
-        navigate('/home/detail',{
+        navigate('/buyer/detail',{
             state:{
                 ingredient: ingredient,
                 sellerAddress: sellerAddress,

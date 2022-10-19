@@ -10,13 +10,13 @@ export default function Home() {
     const {account} = useContext(AppContext)
 
     const handleDeploy = () => {
-        navigate("/home/deploy")
+        navigate("/buyer/deploy")
     }
     const handleAttach = () => {
-        navigate("/home/attach")
+        navigate("/seller/order")
     }
     const handleView = () => {
-        navigate("/view")
+        navigate("/view/attach")
     }
 
     return <>

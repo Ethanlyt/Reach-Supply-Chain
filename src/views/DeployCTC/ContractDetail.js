@@ -42,7 +42,6 @@ export default function ContractDetail () {
     
 
     return <>
-    {/* test */}
         {ctcInfo}
         <Title />
         <AccountDetails />
