@@ -16,6 +16,10 @@ stdlib.setWalletFallback(stdlib.walletFallback({
 }));
 
 
+export function deployContract(account) {
+    return account.contract(backend);
+}
+
 // Atomic unit to standard
 export function formatCurrency(amount) {
     if ( isNaN(amount) ) return '-';
