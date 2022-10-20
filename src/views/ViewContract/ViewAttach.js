@@ -40,7 +40,7 @@ export default function ViewAttach() {
             multiline
             rows={4}
             variant="filled"
-            sx={{ minWidth: '400px', maxWidth: '700px' }}
+            sx={{ minWidth: '300px', maxWidth: '500px', width: '100%' }}
             value={ctcInfoInput}
             onChange={(e)=> setCtcInfoInput(e.target.value)}
         />

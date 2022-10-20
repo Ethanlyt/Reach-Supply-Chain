@@ -36,7 +36,7 @@ export default function ContractDetail () {
         showSuccessToast("Link Copied to Clipboard, please share link to the seller");
     }
     const handleShareQR = () => {
-        saveAs(`https://api.qrserver.com/v1/create-qr-code/?data=${url}&size=150x150`,'source-smart-qr.jpg')
+        saveAs(`https://api.qrserver.com/v1/create-qr-code/?data=${url}&size=150x150`,'source-smart-qr.jpg');
         showSuccessToast("Saved QR, please share QR to the seller");
     }
     
