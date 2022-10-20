@@ -15,7 +15,6 @@ export default function Order () {
     const { showSuccessToast, showErrorToast} = useContext(SnackbarContext)
     
     const handleAccept = () =>{
-        console.log("triggered")
         navigate("/seller/accept")
     }
     const handleReject = () => {
