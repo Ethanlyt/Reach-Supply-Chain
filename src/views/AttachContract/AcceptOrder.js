@@ -1,12 +1,13 @@
 import React, { useState, useContext} from "react"
 import Title from "../components/Title"
 import { Button, Typography, TextField, Card, CardContent } from "@mui/material"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import ContractContext from "../../context/ContractContext"
 
 export default function AcceptOrder () {
     const navigate = useNavigate()
     const {accept} = useContext(ContractContext);
+    const {ctcinfo} = useParams()
 
     const handleSubmit = () => {
         accept("ingredient")
@@ -18,10 +19,10 @@ export default function AcceptOrder () {
             <CardContent>
                 <h2 className='text-center'><b>Contract Details</b></h2>
                 <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                    Ingredient Name:
+                    Ingredient Name: {ctcinfo}
                 </Typography>
                 <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                    Buyer Address:
+                    Buyer Address: {ctcinfo}
                 </Typography>
             </CardContent>
         </Card>

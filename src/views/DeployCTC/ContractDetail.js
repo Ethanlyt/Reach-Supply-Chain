@@ -28,7 +28,8 @@ export default function ContractDetail () {
             const ctcInfo = await contract.getInfo();
             setCtcInfo(JSON.stringify(ctcInfo));
         })();
-        seturl(`http://localhost:3000/Morra-Smart-Contract#/seller/order/${encodeURI(ctcInfoInput) }`)
+        console.log(ctcInfo)
+        seturl(`http://localhost:3000/Morra-Smart-Contract#/seller/order/${encodeURI(ctcInfo) }`)
     }, [contract]);
 
     //Share to other platform 
@@ -65,7 +66,7 @@ export default function ContractDetail () {
 
         <div className='d-flex justify-content-between w-75'>
             <div className='flex-column d-flex justify-content-center'>
-                <Card sx={{ minWidth: 275, height: 180 }}>
+                <Card sx={{ minWidth: 275, height: 280 }}>
                     <CardContent>
                         <Typography sx={{ fontSize: 16 }} color="text.secondary" gutterBottom>
                             {url}
@@ -76,7 +77,7 @@ export default function ContractDetail () {
                 <Button variant='outlined' onClick={handleShareLink}>Share Link</Button>
             </div>
             <div className='flex-column d-flex justify-content-center'>
-                <Card sx={{ minWidth: 175, height: 180 }}>
+                <Card sx={{ minWidth: 175, height: 280 }}>
                     <CardContent>
                         <img src={`https://api.qrserver.com/v1/create-qr-code/?data=${url}&size=150x150`} />
                     </CardContent>

@@ -37,7 +37,7 @@ export default function AppRoutes() {
         </Route>
         
         <Route path="/seller">
-            <Route path="order/:ctcInfo" element={<Order />} />
+            <Route path="order" element={<Order />} />
             <Route path="accept/:ctcInfo" element={<AcceptOrder />} />
             <Route path="reject/:ctcInfo" element={<RejectOrder />} />
             <Route path="track/:ctcInfo" element={<SellerTrack />} />

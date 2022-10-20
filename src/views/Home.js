@@ -13,7 +13,7 @@ export default function Home() {
         navigate("/buyer/deploy")
     }
     const handleAttach = () => {
-        navigate("/seller/order")
+        navigate("/seller/order/")
     }
     const handleView = () => {
         navigate("/view/attach")
