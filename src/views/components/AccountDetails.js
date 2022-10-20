@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from "react";
-import { Typography, Card, CardContent, CircularProgress } from "@mui/material"
+import { Link } from "react-router-dom";
+import { Typography, Card, CardContent, } from "@mui/material"
 
 import { stdlib, getBalance } from "../../Util";
 import AppContext from "../../context/AppContext"
@@ -13,6 +14,7 @@ export default function AccountDetails() {
     const { account } = useContext(AppContext);
 
     const [ isLoading, setIsLoading ] = React.useState(true);
+    const [ isNotConnected, setIsNotConnected ] = React.useState(false);
     const [ address, setAddress ] = React.useState('');
     const [ balance, setBalance ] = React.useState(0);
     const [ standardUnit, setStandardUnit ] = React.useState('');
@@ -20,7 +22,7 @@ export default function AccountDetails() {
     
     useEffect(() => {
         (async ()=> {
-            if (!account) return setIsLoading(true);
+            if (!account) return setIsNotConnected(true);
             
             const bal = await getBalance(account);
             setAddress(account.getAddress());
@@ -31,11 +33,15 @@ export default function AccountDetails() {
     }, [account]);
 
 
-    
     return <Card sx={{ minWidth: 275 }} className='my-4'>
         <CardContent>
 
         {
+            isNotConnected?
+            <Typography variant="subtitle1" className='lead'>
+                You are currently not connected to any wallet. <Link to='/'>Connect now</Link>
+            </Typography>
+            :
             isLoading ?
             <Loading message="Loading account details..." /> 
             :
