@@ -6,7 +6,7 @@ import { loadStdlib, ALGO_MyAlgoConnect } from "@reach-sh/stdlib";
 import * as backend from "./reach-backend/index.main.mjs";
 
 
-const CONTRACT_STATES = {
+export const CONTRACT_STATES = {
     0: "Pending Supplier's Review",
     1: "Approved",
     2: "Rejected",
@@ -17,7 +17,7 @@ const CONTRACT_STATES = {
 
 export const stdlib = loadStdlib({
     ...process.env,
-    // 'REACH_CONNECTOR_MODE': 'ALGO',
+    'REACH_CONNECTOR_MODE': 'ALGO',
 });
 
 stdlib.setWalletFallback(stdlib.walletFallback({

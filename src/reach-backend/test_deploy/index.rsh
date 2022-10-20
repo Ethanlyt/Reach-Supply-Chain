@@ -15,12 +15,16 @@ const DetailInterface = {
     name: Bytes(128),
     buyerAddress: Address,
     supplierAddress: Address,
+
+    // To set the state
+    state: UInt,
 };
 
 const DetailsStruct = Struct([
     ['name', Bytes(128)],
     ['buyerAddress', Address],
     ['supplierAddress', Address],
+    ['state', UInt],
 ]);
 
 
@@ -28,17 +32,19 @@ const DetailsStruct = Struct([
 
 export const main = Reach.App(()=> {
 
+    // Participant for deploying
     const Buyer = Participant("Buyer", {
-        details: DetailsStruct,
-        launched: Fun([], Null),
+        details: DetailsStruct,             // The values used to initialize when deploying the contract
+        launched: Fun([Contract], Null),    // To inform the participant that the contract has been deployed, and giving it the contract's address
     });
+    // API
     const Seller = API("Seller", {
-        addIngredient: Fun([Contract], Null),
+        addIngredient: Fun([Contract], Null),   // An API that allows the seller to add ingredient contract address
     });
+    // Views
     const Explorer = View('Explorer', {
         details: DetailsStruct,
         listOfIngredients: Array( Contract, 10 ),
-        state: UInt,
         rejectReason: Bytes(128),
         deployedNetworkTime: UInt,
         reviewedNetworkTime: UInt,
@@ -51,9 +57,10 @@ export const main = Reach.App(()=> {
         const details = declassify(interact.details);
     });
     Buyer.publish(details);
-    Buyer.interact.launched();
+    // Inform the deployer that the contract is deployed
+    Buyer.interact.launched( getContract() );
+    // Setting the views value
     Explorer.details.set(details);
-    Explorer.state.set(PENDING_REVIEW);
     Explorer.rejectReason.set( Bytes(128).pad("Too salty. I Reject") );
     // I am setting all the times to the time when the contract is deployed.
     // In actual implementation, do set these times realistically.
@@ -62,8 +69,8 @@ export const main = Reach.App(()=> {
     Explorer.deliveredNetworkTime.set( thisConsensusTime() );
 
 
-    // The array of ingredients, which is contract by itself
-    // I am setting here to the current contract address as default value.
+    // The array of ingredients, which is array of contract addresses
+    // I am setting here to the current contract address as default value, and maximum size of 10
     const ingredientContractArray = array(Contract, [
         getContract(), getContract(),
         getContract(), getContract(),

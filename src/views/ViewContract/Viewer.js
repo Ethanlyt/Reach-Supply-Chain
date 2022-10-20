@@ -48,7 +48,12 @@ export default function ViewAttach() {
                     buyerAddress='0x1213123123123213123'
                     supplierAddress='0x1213123123123213123'
                     name='Ajinomoto Monosodium Glutamate'
-                    description='Ajinomoto Monosodium Glutamate is a food additive used to enhance the flavor of foods.'
+                    state={1}
+                    listOfIngredients={['0x1231231232131231', '0x1231231232131231', '0x1231231232131231']}
+                    rejectReason='Not enough salt'
+                    deployedNetworkTime={1620000000}
+                    reviewedNetworkTime={1620000000}
+                    deliveredNetworkTime={1620000000}
                 />
 
             </CardContent>

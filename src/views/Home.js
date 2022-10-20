@@ -1,53 +1,50 @@
-import { Typography, ButtonGroup, Button, Link } from "@mui/material";
-import React, {useContext} from 'react'
+import { Button } from "@mui/material";
+import React from 'react'
 import {useNavigate} from 'react-router-dom'
 import Title from './components/Title'
-import AppContext from "../context/AppContext";
 import AccountDetails from "./components/AccountDetails";
 
 export default function Home() {
-    const navigate = useNavigate()
-    const {account} = useContext(AppContext)
-
-    const handleDeploy = () => {
-        navigate("/buyer/deploy")
-    }
-    const handleAttach = () => {
-        navigate("/seller/order")
-    }
-    const handleView = () => {
-        navigate("/view/attach")
-    }
+    
+    const navigate = useNavigate();
 
     return <>
         <Title />
         <AccountDetails />
-        <hr />
-        <div className="d-flex flex-column">
+        
+        <div className="d-flex flex-column gap-3">
+
             <Button
                 variant="outlined"
                 size="large"
-                onClick= { handleDeploy }
+                onClick= { ()=> navigate('/buyer/deploy') }
             >
                 Deploy New CTC
             </Button>
-            <br/>
+
             <Button
                 variant="outlined"
                 size="large"
-                onClick={ handleAttach}
+                onClick={ ()=> navigate('/seller/order') }
             >
                 Attach Contract
             </Button>
-            <br />
+
             <Button
                 variant="outlined"
                 size="large"
-                onClick={ handleView }
+                onClick={ ()=> navigate('/view/attach') }
             >
                 View Contract
             </Button>
-        </div>
-    </>
 
+            <Button
+                variant="outlined"
+                size="large"
+                onClick={ ()=> navigate('/test/deploy') }
+            >
+                Deploy Test Contract
+            </Button>
+        </div>
+    </>;
 }
