@@ -21,13 +21,14 @@ export default function ContractDetail () {
     const {account} = useContext(AppContext)
     const { showSuccessToast } = useContext(SnackbarContext)
 
-    const [url, seturl] = useState("https://www.google.com/")
+    const [url, seturl] = useState("")
 
     useEffect(() => {
         (async () => {
             const ctcInfo = await contract.getInfo();
             setCtcInfo(JSON.stringify(ctcInfo));
         })();
+        seturl(`http://localhost:3000/Morra-Smart-Contract#/seller/order/${encodeURI(ctcInfoInput) }`)
     }, [contract]);
 
     //Share to other platform 
