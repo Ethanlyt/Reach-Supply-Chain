@@ -112,22 +112,22 @@ export default function TestDeploy() {
             </Typography>
 
             <Card>
-            <CardContent>
-                <ContractDetailsTable
-                    isLoading={isLoading}
+                <CardContent>
+                    <ContractDetailsTable
+                        isLoading={isLoading}
 
-                    contractAddress={ JSON.stringify(JSON.parse(decodeURI(ctcInfo)) ) }
-                    name={name}
-                    buyerAddress={buyerAddress}
-                    supplierAddress={supplierAddress}
-                    state={cState}
-                    listOfIngredients={listOfIngredients}
-                    rejectReason={rejectReason}
-                    deployedNetworkTime={deployedNetworkTime}
-                    reviewedNetworkTime={reviewedNetworkTime}
-                    deliveredNetworkTime={deliveredNetworkTime}
-                />
-            </CardContent>
+                        contractAddress={ JSON.stringify(JSON.parse(decodeURI(ctcInfo)) ) }
+                        name={name}
+                        buyerAddress={buyerAddress}
+                        supplierAddress={supplierAddress}
+                        state={cState}
+                        listOfIngredients={listOfIngredients}
+                        rejectReason={rejectReason}
+                        deployedNetworkTime={deployedNetworkTime}
+                        reviewedNetworkTime={reviewedNetworkTime}
+                        deliveredNetworkTime={deliveredNetworkTime}
+                    />
+                </CardContent>
             </Card>
 
             {

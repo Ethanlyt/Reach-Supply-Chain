@@ -35,8 +35,8 @@ export default function AppRoutes() {
 
         <Route path="/buyer">
             <Route path="deploy" element={<DeployCTC />} />
-            <Route path="detail" element={<ContractDetail />} />
-            <Route path="track" element={<BuyerTrack />} />
+            <Route path="detail/:ctcInfo" element={<ContractDetail />} />
+            <Route path="track/:ctcInfo" element={<BuyerTrack />} />
         </Route>
         
         <Route path="/seller">
@@ -45,8 +45,6 @@ export default function AppRoutes() {
             <Route path="reject/:ctcInfo" element={<RejectOrder />} />
             <Route path="track/:ctcInfo" element={<SellerTrack />} />
         </Route>
-
-       
 
         <Route path='/view'>
             <Route path='attach' element={ <ViewAttach />} />
