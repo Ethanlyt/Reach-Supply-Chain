@@ -75,8 +75,8 @@ export default function ContractDetailsTable({
                     <TableCell sx={{ flex: 1 }} align='left'>
                         <ul>
                             { listOfIngredients.map((ing, i)=> {
-                                if (JSON.stringify(ing) === contractAddress) return null;
-                                return <li key={i}>{ JSON.stringify(ing) }</li>
+                                if (ing === contractAddress) return null;
+                                return <li key={i}>{ ing }</li>
                             }) }
                         </ul>
                     </TableCell>

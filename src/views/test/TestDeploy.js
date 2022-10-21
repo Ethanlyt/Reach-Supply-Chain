@@ -8,7 +8,7 @@ import SnackbarContext from "../../context/SnackbarContext";
 
 import Loading from "../components/Loading";
 
-import { stdlib } from "../../Util";
+import { stdlib, parseAddress } from "../../Util";
 import * as testbackend from "../../reach-backend/test_deploy/index.main.mjs";
 
 
@@ -48,8 +48,8 @@ export default function TestDeploy() {
                 launched: (info) => stdlib.disconnect(info),
             }));
 
-            showSuccessToast("Contract deployed successfully at " + JSON.stringify(info));
-            navigate(`/test/${ encodeURI(JSON.stringify(info)) }`);
+            showSuccessToast("Contract deployed successfully at " + parseAddress(info));
+            navigate(`/test/${ encodeURI(parseAddress(info) ) }`);
 
         } catch (e) {
             showErrorToast(e.message);

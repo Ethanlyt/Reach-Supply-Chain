@@ -2,14 +2,21 @@ import React, { useContext, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Card, CardContent, Typography } from "@mui/material";
 
+import AppContext from "../../context/AppContext";
 import SnackbarContext from "../../context/SnackbarContext";
+
 import { ToggleDrawer, FloatingActionButtonDrawerToggle } from "../components/Drawer";
 
-import FeedIcon from '@mui/icons-material/Feed';
 
 import Title from "../components/Title";
 import Loading from "../components/Loading";
 import ContractDetailsTable from "../components/ContractDetailsTable";
+
+import FeedIcon from '@mui/icons-material/Feed';
+
+import { getContractViews, getContractHandler } from "../../Util";
+
+
 
 
 export default function ViewAttach() {
@@ -17,21 +24,40 @@ export default function ViewAttach() {
     const navigate = useNavigate();
     const { ctcInfo } = useParams();
     
-    const [ currentCtc, setCurrentCtc ] = useState(null);
-    const [ isDrawerOpen, setIsDrawerOpen ] = useState(false);
+    const { account } = useContext(AppContext);
     const { showErrorToast } = useContext(SnackbarContext);
 
-    const [ isLoading, setIsLoading ] = useState(false);
+    const [ rootCtc, setRootCtc ] = useState(null);
+    const [ currentCtc, setCurrentCtc ] = useState(null);
+    const [ isDrawerOpen, setIsDrawerOpen ] = useState(false);
+
+    const [ isLoading, setIsLoading ] = useState(true);
 
 
     useEffect(()=> {
         if (!ctcInfo) navigate('/view/attach');
-        // TODO: Load the parent ctcInfo here.
-    }, [ctcInfo, navigate]);
+        
+        (async ()=> {
+            const ctc = await getContractHandler(account, ctcInfo);
+            setRootCtc(ctc);
+            setCurrentCtc(ctc);
+        })();
+    }, [account, ctcInfo, navigate]);
+
+
+    useEffect(()=> {
+        if (!currentCtc) return;
+
+        (async ()=> {
+            const view = await getContractViews({ ctc: currentCtc });
+            console.dir(view);
+        })();
+    }, [currentCtc]);
 
 
 
     if (isLoading) return <Loading message="Retrieving contract information. Please wait" />;
+
 
     return <>
         <Title />
