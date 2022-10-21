@@ -44,6 +44,7 @@ export const main = Reach.App(()=> {
     // Views
     const Explorer = View('Explorer', {
         details: DetailsStruct,
+        state: UInt,
         listOfIngredients: Array( Contract, 10 ),
         rejectReason: Bytes(128),
         deployedNetworkTime: UInt,
@@ -61,6 +62,7 @@ export const main = Reach.App(()=> {
     Buyer.interact.launched( getContract() );
     // Setting the views value
     Explorer.details.set(details);
+    Explorer.state.set(details.state);
     Explorer.rejectReason.set( Bytes(128).pad("Too salty. I Reject") );
     // I am setting all the times to the time when the contract is deployed.
     // In actual implementation, do set these times realistically.
