@@ -5,6 +5,8 @@ import { Typography, Button, TextField } from "@mui/material";
 import SnackbarContext from "../../context/SnackbarContext";
 import Title from "../components/Title";
 
+import { parseAddress } from "../../Util";
+
 
 export default function ViewAttach() {
 
@@ -19,14 +21,13 @@ export default function ViewAttach() {
     const onSubmit = async ()=> {
         if (!ctcInfoInput) return showErrorToast('Please enter the contract information');
 
-        try {
-            JSON.parse(ctcInfoInput);   // Test if it is valid JSON
-        } catch (e) {
-            return showErrorToast('Invalid contract information: ' + e.message);
-        }
+        try { parseAddress(ctcInfoInput) } 
+        catch (e) { return showErrorToast(e.message) }
 
         navigate(`/view/${ encodeURI(ctcInfoInput) }`);
     }
+
+    
 
     return <>
         <Title />

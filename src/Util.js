@@ -56,18 +56,41 @@ export async function getContractHandler(account, ctcInfo) {
 }
 
 
-export async function getContractViews(account, ctcInfo, parentAddress) {
-    let ctc;
-    if (account) ctc = await account.contract( backend, ctcInfo );
-    else ctc = await stdlib.contract(backend, ctcInfo);
+// On Etherium, contractInfo is a string, return as it is.
+// On Algorand, contractInfo is an BigNumber object, return after parseInt.
+export function parseAddress(address) {
+    if (typeof address === 'string') return address;
+    if (address.type === 'BigNumber') return address.hex;
+    if (address._isBigNumber) return address._hex;
+    throw new Error("Unknown address type: " + address);
+}
+
+
+export async function networkTimeToDateString(networkTime) {
+    if (parseInt(networkTime) <= 0) return "N/A";
+    const secs = parseInt( await stdlib.getTimeSecs( networkTime ) );
+    return new Date(secs * 1000).toLocaleString();
+}
+
+
+export async function getContractViews({ account, ctcInfo, ctc }) {
+    if (!ctc) ctc = await getContractHandler(account, ctcInfo);
+    const details = await ctc.unsafeViews.Explorer.details();
+
 
     return {
-        name: await ctc.v.Explorer.name(),
-        buyerAddress: await ctc.v.Explorer.buyerAddress(),
-        supplierAddress: await ctc.v.Explorer.supplierAddress(),
-        listOfIngredients: await ctc.v.Explorer.listOfIngredients(),
-        rejectReason: await ctc.v.Explorer.rejectReason(),
-        state: await ctc.v.Explorer.state(),
-        parent: parentAddress,
+        name: details.name,
+        buyerAddress: details.buyerAddress,
+        supplierAddress: details.supplierAddress,
+        contractAddress: parseAddress( await ctc.getInfo() ),
+        state: parseInt( await ctc.unsafeViews.Explorer.state() ),
+        listOfIngredients: (await ctc.unsafeViews.Explorer.listOfIngredients() ).map(parseAddress),
+        rejectReason: await ctc.unsafeViews.Explorer.rejectReason(),
+        // deployedNetworkTime: parseInt(await ctc.unsafeViews.Explorer.deployedNetworkTime() ),
+        deployedNetworkTime: await networkTimeToDateString( await ctc.unsafeViews.Explorer.deployedNetworkTime() ),
+        reviewedNetworkTime: await networkTimeToDateString( await ctc.unsafeViews.Explorer.reviewedNetworkTime() ),
+        deliveredNetworkTime: await networkTimeToDateString( await ctc.unsafeViews.Explorer.deliveredNetworkTime() ),
     };
 }
+
+

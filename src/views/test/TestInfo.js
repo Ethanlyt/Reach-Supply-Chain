@@ -1,7 +1,6 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Typography, Button, TextField, Box, Card, CardContent, } from "@mui/material";
-import { Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 
 import AppContext from "../../context/AppContext";
 import SnackbarContext from "../../context/SnackbarContext";
@@ -10,7 +9,7 @@ import ContractDetailsTable from "../components/ContractDetailsTable";
 
 import Loading from "../components/Loading";
 
-import { stdlib } from "../../Util";
+import { getContractViews, parseAddress } from "../../Util";
 import * as testbackend from "../../reach-backend/test_deploy/index.main.mjs";
 
 
@@ -30,6 +29,7 @@ export default function TestDeploy() {
     const [ name, setName ] = useState("");
     const [ buyerAddress, setBuyerAddress ] = useState("");
     const [ supplierAddress, setSupplierAddress ] = useState("");
+    const [ contractAddress, setContractAddress ] = useState("");
     const [ cState, setCState ] = useState(0);
     const [ listOfIngredients, setListOfIngredients ] = useState([]);
     const [ rejectReason, setRejectReason ] = useState("");
@@ -42,17 +42,22 @@ export default function TestDeploy() {
         setIsLoading(true);
 
         try {
-            const { name, buyerAddress, supplierAddress, state } = await ctc.unsafeViews.Explorer.details();
+            const {
+                name, buyerAddress, supplierAddress, contractAddress, state,
+                listOfIngredients, rejectReason, deployedNetworkTime, deliveredNetworkTime, reviewedNetworkTime
+            } = await getContractViews({ ctc });
+
             setName(name);
             setBuyerAddress(buyerAddress);
             setSupplierAddress(supplierAddress);
-            setCState( parseInt(state) );
-
-            setListOfIngredients( await ctc.unsafeViews.Explorer.listOfIngredients() );
-            setRejectReason( await ctc.unsafeViews.Explorer.rejectReason() );
-            setDeployedNetworkTime( parseInt( await ctc.unsafeViews.Explorer.deployedNetworkTime() ) );
-            setReviewedNetworkTime( parseInt( await ctc.unsafeViews.Explorer.reviewedNetworkTime() ) );
-            setDeliveredNetworkTime( parseInt( await ctc.unsafeViews.Explorer.deliveredNetworkTime() ) );
+            setContractAddress(contractAddress);
+            setCState( state );
+            
+            setListOfIngredients( listOfIngredients );
+            setRejectReason( rejectReason );
+            setDeployedNetworkTime( deployedNetworkTime );
+            setReviewedNetworkTime( reviewedNetworkTime );
+            setDeliveredNetworkTime( deliveredNetworkTime );
         } catch (e) {
             showErrorToast(e.message);
         }
@@ -84,16 +89,17 @@ export default function TestDeploy() {
         if (!account) navigate("/");
     }, [account, navigate]);
 
+
     useEffect(()=> {
         if (!ctcInfo) navigate("/");
 
         try {
-            const ctc = account.contract(testbackend, JSON.parse(decodeURI(ctcInfo)));
+            const ctc = account.contract(testbackend, decodeURI(ctcInfo));
             setCtc(ctc);
         } catch (e) {
             showErrorToast(e.message);
         }
-    }, [ctcInfo, navigate, showErrorToast]);
+    }, [ctcInfo, account, navigate, showErrorToast]);
 
     useEffect(()=> {
         if (!ctc) return;
@@ -116,7 +122,7 @@ export default function TestDeploy() {
                 <ContractDetailsTable
                     isLoading={isLoading}
 
-                    contractAddress={ JSON.stringify(JSON.parse(decodeURI(ctcInfo)) ) }
+                    contractAddress={ parseAddress(contractAddress) }
                     name={name}
                     buyerAddress={buyerAddress}
                     supplierAddress={supplierAddress}
