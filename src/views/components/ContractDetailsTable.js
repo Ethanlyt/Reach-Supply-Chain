@@ -6,6 +6,16 @@ import Loading from "./Loading";
 import { CONTRACT_STATES } from "../../Util";
 
 
+
+
+const STATE_COLOR = {
+    0: "#2196f3",
+    1: "#4caf50",
+    2: "#aa2e25",
+    3: "#357a38"
+};
+
+
 export default function ContractDetailsTable({
     isLoading,
 
@@ -25,93 +35,128 @@ export default function ContractDetailsTable({
 
     return <>
         <TableContainer>
-        <Table aria-label="Table for contract information">
+        <Table aria-label="Table for contract information" size="small">
         <TableBody>
 
             {
                 name? 
                 <TableRow>
-                    <TableCell align="right" className='fw-bold'>Name</TableCell>
-                    <TableCell sx={{ flex: 1 }} align='left'>{ name }</TableCell>
-                </TableRow>: null
-            }
+                    <TableCell align="right" className='fw-bold d-flex align-items-center'>
+                        Name
+                    </TableCell>
 
-            {
-                contractAddress?
-                <TableRow>
-                    <TableCell align="right" className='fw-bold'>Contract Address</TableCell>
-                    <TableCell sx={{ flex: 1 }} align='left'>{ contractAddress }</TableCell>
-                </TableRow>: null
-            }
-
-            {
-                buyerAddress?
-                <TableRow>
-                    <TableCell align="right" className='fw-bold'>Buyer Address</TableCell>
-                    <TableCell sx={{ flex: 1 }} align='left'>{ buyerAddress }</TableCell>
-                </TableRow>: null
-            }
-
-            {
-                supplierAddress?
-                <TableRow>
-                    <TableCell align="right" className='fw-bold'>Supplier Address</TableCell>
-                    <TableCell sx={{ flex: 1 }} align='left'>{ supplierAddress }</TableCell>
+                    <TableCell sx={{ flex: 1, py: 1 }} align='left' >{ name }</TableCell>
                 </TableRow>: null
             }
 
             {
                 (state in CONTRACT_STATES)?
                 <TableRow>
-                    <TableCell align="right" className='fw-bold'>Status</TableCell>
-                    <TableCell sx={{ flex: 1 }} align='left'>{ CONTRACT_STATES[state] }</TableCell>
+                    <TableCell align="right" className='fw-bold'>
+                        Status
+                    </TableCell>
+
+                    <TableCell sx={{ flex: 1, py: 1, color: STATE_COLOR[state], fontWeight: 'bold' }} align='left' >
+                        { CONTRACT_STATES[state] }
+                    </TableCell>
+                </TableRow>: null
+            }
+
+            {
+                contractAddress?
+                <TableRow>
+                    <TableCell align="right" className='fw-bold'>
+                        Contract Address
+                    </TableCell>
+
+                    <TableCell sx={{ flex: 1, py: 1, }} align='left'>{ contractAddress }</TableCell>
+                </TableRow>: null
+            }
+
+            {
+                buyerAddress?
+                <TableRow>
+                    <TableCell align="right" className='fw-bold'>
+                        Buyer Address
+                    </TableCell>
+
+                    <TableCell sx={{ flex: 1, py: 1, }} align='left' >{ buyerAddress }</TableCell>
+                </TableRow>: null
+            }
+
+            {
+                supplierAddress?
+                <TableRow>
+                    <TableCell align="right" className='fw-bold'>
+                        Supplier Address
+                    </TableCell>
+
+                    <TableCell sx={{ flex: 1, py: 1, }} align='left'>{ supplierAddress }</TableCell>
                 </TableRow>: null
             }
             
             {
                 (listOfIngredients && listOfIngredients.length > 0)?
                 <TableRow>
-                    <TableCell align="right" className='fw-bold'>Ingredients</TableCell>
-                    <TableCell sx={{ flex: 1 }} align='left'>
+                    <TableCell align="right" className='fw-bold'>
+                        Ingredients
+                    </TableCell>
+
+                    <TableCell sx={{ flex: 1, py: 1, }} align='left'>
                         <ul>
-                            { listOfIngredients.map((ing, i)=> {
-                                if (ing === contractAddress) return null;
-                                return <li key={i}>{ ing }</li>
-                            }) }
+                            {
+                                listOfIngredients
+                                    .filter(ing => ing !== contractAddress)
+                                    .map((ing, i)=> <li key={i}>{ing}</li>)
+                            }
                         </ul>
                     </TableCell>
-                </TableRow>: null
+                </TableRow>
+                : 
+                null
             }
 
             {
                 rejectReason?
                 <TableRow>
-                    <TableCell align="right" className='fw-bold'>Reject Reason</TableCell>
-                    <TableCell sx={{ flex: 1 }} align='left'>{ rejectReason }</TableCell>
+                    <TableCell align="right" className='fw-bold'>
+                        Reject Reason
+                    </TableCell>
+
+                    <TableCell sx={{ flex: 1, py: 1, }} align='left'>{ rejectReason }</TableCell>
                 </TableRow>: null
             }
 
             {
                 deployedNetworkTime?
                 <TableRow>
-                    <TableCell align="right" className='fw-bold'>Deployed Time</TableCell>
-                    <TableCell sx={{ flex: 1 }} align='left'>{ deployedNetworkTime }</TableCell>
+                    <TableCell align="right" className='fw-bold'>
+                        Deployed Time
+                    </TableCell>
+
+                    <TableCell sx={{ flex: 1, py: 1, }} align='left'>{ deployedNetworkTime }</TableCell>
                 </TableRow>: null
             }
 
             {
                 reviewedNetworkTime?
                 <TableRow>
-                    <TableCell align="right" className='fw-bold'>Reviewed Time</TableCell>
-                    <TableCell sx={{ flex: 1 }} align='left'>{ reviewedNetworkTime }</TableCell>
+                    <TableCell align="right" className='fw-bold'>
+                        Reviewed Time
+                    </TableCell>
+
+                    <TableCell sx={{ flex: 1, py: 1, }} align='left'>{ reviewedNetworkTime }</TableCell>
                 </TableRow>: null
             }
 
             {
                 deliveredNetworkTime?
                 <TableRow>
-                    <TableCell align="right" className='fw-bold'>Delivered Time</TableCell>
-                    <TableCell sx={{ flex: 1 }} align='left'>{ deliveredNetworkTime }</TableCell>
+                    <TableCell align="right" className='fw-bold'>
+                        Delivered Time
+                    </TableCell>
+
+                    <TableCell sx={{ flex: 1, py: 1, }} align='left'>{ deliveredNetworkTime }</TableCell>
                 </TableRow>: null
             }
 
