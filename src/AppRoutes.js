@@ -21,8 +21,8 @@ import SellerTrack from "./views/AttachContract/SellerTrack"
 import ViewAttach from "./views/ViewContract/ViewAttach";
 import Viewer from "./views/ViewContract/Viewer";
 
-import TestDeploy from './views/test/TestDeploy';
-import TestInfo from './views/test/TestInfo';
+import TestDeploy from './views/Test/TestDeploy';
+import TestInfo from './views/Test/TestInfo';
 
 
 

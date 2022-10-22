@@ -9,7 +9,7 @@ import AppContext from '../../context/AppContext';
 import SnackbarContext from '../../context/SnackbarContext';
 import AccountDetails from '../components/AccountDetails';
 
-import {deployContract, stdlib} from '../../Util'
+import {deployContract, parseAddress, stdlib} from '../../Util'
 
 export default function DeployCTC () {
     const navigate = useNavigate()
@@ -32,27 +32,22 @@ export default function DeployCTC () {
 
     const handleSubmitDeploy = async () => {
         if(ingredient === "" || sellerAddress === "") return showErrorToast("Please fill in the required information")
-        // if (!account || contract) return showErrorToast("Error Occured")
-
-        setIsSubmit(false)
-        const ctc = deployContract(account)
+        
+        setIsSubmit(false);
 
         try {
-            const info = await stdlib.withDisconnect(() => ctc.p.Buyer({
-                details: {
-                    name : ingredient,
-                    buyerAddress: buyerAddress,
-                    supplierAddress: sellerAddress,
-                    state: cState,
-                },
-                launched: (info) => stdlib.disconnect(info)
-            }))
-            showSuccessToast(`Contract deployed successfully : ${decodeURI(info) }`)
-            setContract(ctc)
-            navigate(`/buyer/detail/${encodeURI(info)}`)
+            const ctcInfo = await deployContract(account, {
+                name : ingredient,
+                buyerAddress: sellerAddress,
+                supplierAddress: sellerAddress,
+                state: 0,
+            });
+            showSuccessToast(`Contract deployed successfully : ${ parseAddress(ctcInfo) }`);
+            // setContract(ctc);
+            navigate(`/buyer/detail/${encodeURI(ctcInfo)}`)
         } catch (error) {
-            showErrorToast(error.message)
-            setIsSubmit(true)
+            showErrorToast(error.message);
+            setIsSubmit(true);
         }
 
 
