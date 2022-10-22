@@ -46,11 +46,7 @@ export default function ViewAttach() {
             onChange={(e)=> setCtcInfoInput(e.target.value)}
         />
 
-        <Button 
-            onClick={ onSubmit } 
-            variant="contained"
-            className='my-2'
-        >
+        <Button onClick={ onSubmit } variant="contained" className='my-2'>
             View
         </Button>
     </>;
