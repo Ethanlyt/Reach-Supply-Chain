@@ -122,7 +122,7 @@ export default function TestDeploy() {
                     <ContractDetailsTable
                         isLoading={isLoading}
 
-                        contractAddress={ JSON.stringify(JSON.parse(decodeURI(ctcInfo)) ) }
+                        contractAddress={ parseAddress(contractAddress) }
                         name={name}
                         buyerAddress={buyerAddress}
                         supplierAddress={supplierAddress}
