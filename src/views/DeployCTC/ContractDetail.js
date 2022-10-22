@@ -60,7 +60,7 @@ export default function ContractDetail () {
         if(!ctcInfo) navigate("/")
 
         try {
-            const ctc = account.contract(backend, JSON.parse(decodeURI(ctcInfo)));
+            const ctc = account.contract(backend, decodeURI(ctcInfo));
             setCtc(ctc);
         } catch (e) {
             showErrorToast(e.message);
@@ -72,12 +72,6 @@ export default function ContractDetail () {
         if (!ctc) return;
         updateContractViews();
     }, [ctc, updateContractViews]);
-
-    useEffect(() => {
-        if (cState === 1) navigate(`buyer/track/${ctcInfo}`);
-        else if (cState === 2) navigate(`buyer/track/${ctcInfo}`);
-        else return showSuccessToast(`Waiting seller to review`)
-    }, [cState, navigate]);
 
     //Share to other platform 
     const handleShareLink = () => {
@@ -107,7 +101,7 @@ export default function ContractDetail () {
                 </Typography> */}
                 <ContractDetailsTable
                     isLoading={isLoading}
-                    contractAddress={JSON.stringify(JSON.parse(decodeURI(ctcInfo)))}
+                    contractAddress={decodeURI(ctcInfo)}
                     name={ingredient}
                     supplierAddress={sellerAddress}
                     deployedNetworkTime={deployedNetworkTime}

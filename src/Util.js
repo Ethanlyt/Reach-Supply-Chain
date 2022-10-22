@@ -8,16 +8,16 @@ import * as backend from "./reach-backend/index.main.mjs";
 
 export const CONTRACT_STATES = {
     0: "Pending Supplier's Review",
-    1: "Approved",
+    1: "Approved",//
     2: "Rejected",
-    3: "Delivered",
+    3: "Delivered",//
 };
 
 
 
 export const stdlib = loadStdlib({
     ...process.env,
-    'REACH_CONNECTOR_MODE': 'ALGO',
+    // 'REACH_CONNECTOR_MODE': 'ALGO',
 });
 
 stdlib.setWalletFallback(stdlib.walletFallback({
