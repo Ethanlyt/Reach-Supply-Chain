@@ -10,7 +10,6 @@ export default function RejectOrder() {
     const [reason, setReason] = useState("");
     const [isSubmit, setIsSubmit] = useState(false)
     const {ctcInfo} = useParams()
-    const [cState, setCState] = useState()
     const [isLoading, setIsLoading] = useState(true)
 
     const {reject} = useContext(ContractContext);
@@ -54,7 +53,7 @@ export default function RejectOrder() {
         <>
             <ContractDetailsTable
                 isLoading={isLoading}
-                contractAddress= { JSON.stringify(JSON.parse(decodeURI(ctcInfo)) ) }
+                contractAddress={decodeURI(ctcInfo) }
             />
             <h1><br /><br /> Contract Ended</h1>
         </>

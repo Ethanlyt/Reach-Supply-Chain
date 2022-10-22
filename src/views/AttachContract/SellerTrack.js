@@ -21,7 +21,7 @@ export default function SellerTrack () {
     const [isLoading, setIsLoading] = useState(true)
     const [ingredient, setIngredient] = useState("")
     const [buyerAddress, setBuyerAddress] = useState("")
-    const [cState, setCState] = useState(2)
+    const [cState, setCState] = useState(0)
     const [ctc, setCtc] = useState(null)
 
     const steps = [
@@ -47,7 +47,7 @@ export default function SellerTrack () {
         if (!ctcInfo) navigate("/")
 
         try {
-            const ctc = account.contract(backend, JSON.parse(decodeURI(ctcInfo)));
+            const ctc = account.contract(backend, decodeURI(ctcInfo));
             setCtc(ctc);
         } catch (e) {
             showErrorToast(e.message);
@@ -61,7 +61,7 @@ export default function SellerTrack () {
                 <ContractDetailsTable
                     isLoading={isLoading}
 
-                    contractAddress={JSON.stringify(JSON.parse(decodeURI(ctcInfo)))}
+                    contractAddress={decodeURI(ctcInfo)}
                     name={ingredient}
                     buyerAddress={buyerAddress}
                 />

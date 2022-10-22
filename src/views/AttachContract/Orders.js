@@ -57,10 +57,10 @@ export default function Order () {
     }, [account, navigate]);
 
     useEffect(() => {
-        if (!ctcInfo) navigate("/");
+        // if (!ctcInfo) navigate("/");
 
         try {
-            const ctc = account.contract(backend, JSON.parse(decodeURI(ctcInfo)));
+            const ctc = account.contract(backend, decodeURI(ctcInfo));
             setCtc(ctc);
         } catch (e) {
             showErrorToast(e.message);
@@ -110,7 +110,7 @@ export default function Order () {
                     <ContractDetailsTable
                         isLoading={isLoading}
 
-                        contractAddress={JSON.stringify(JSON.parse(decodeURI(ctcInfo)))}
+                        contractAddress={decodeURI(ctcInfo)}
                         name={name}
                         buyerAddress={buyerAddress}
                         supplierAddress={supplierAddress}

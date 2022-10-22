@@ -40,16 +40,16 @@ export default function DeployCTC () {
         try {
             const info = await stdlib.withDisconnect(() => ctc.p.Buyer({
                 details: {
-                    ingredientName : ingredient,
+                    name : ingredient,
                     buyerAddress: buyerAddress,
                     supplierAddress: sellerAddress,
                     state: cState,
                 },
                 launched: (info) => stdlib.disconnect(info)
             }))
-            showSuccessToast(`Contract deployed successfully : ${JSON.stringify(info)}`)
+            showSuccessToast(`Contract deployed successfully : ${decodeURI(info) }`)
             setContract(ctc)
-            navigate(`/buyer/detail/${encodeURI(JSON.stringify(info))}`)
+            navigate(`/buyer/detail/${encodeURI(info)}`)
         } catch (error) {
             showErrorToast(error.message)
             setIsSubmit(true)
