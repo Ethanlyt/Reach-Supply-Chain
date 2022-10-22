@@ -1,5 +1,5 @@
 import React, {useState, useContext, useEffect} from 'react'
-import { useNavigate } from "react-router-dom"
+import { json, useNavigate } from "react-router-dom"
 import { Typography, Button, TextField } from "@mui/material"; 
 
 import Title from '../components/Title'
@@ -9,12 +9,14 @@ import AppContext from '../../context/AppContext';
 import SnackbarContext from '../../context/SnackbarContext';
 import AccountDetails from '../components/AccountDetails';
 
-import {deployContract} from '../../Util'
+import {deployContract, stdlib} from '../../Util'
 
 export default function DeployCTC () {
     const navigate = useNavigate()
     const [ingredient, setIngredient] = useState("")
+    const [buyerAddress, setBuyerAddress] = useState("")
     const [sellerAddress, setSellerAddress] = useState("")
+    const [cState, setCState] = useState(0)
 
     const [isSubmit, setIsSubmit] = useState(true)
 
@@ -25,24 +27,35 @@ export default function DeployCTC () {
         account
     } = useContext(AppContext)
     const {
-        showErrorToast
+        showErrorToast, showSuccessToast
     } = useContext(SnackbarContext)
 
-    const handleSubmitDeploy = () => {
+    const handleSubmitDeploy = async () => {
         if(ingredient === "" || sellerAddress === "") return showErrorToast("Please fill in the required information")
         // if (!account || contract) return showErrorToast("Error Occured")
 
         setIsSubmit(false)
         const ctc = deployContract(account)
-        setContract(ctc)
 
-        
-        navigate('/buyer/detail',{
-            state:{
-                ingredient: ingredient,
-                sellerAddress: sellerAddress,
-            }
-        })
+        try {
+            const info = await stdlib.withDisconnect(() => ctc.p.Buyer({
+                details: {
+                    ingredientName : ingredient,
+                    buyerAddress: buyerAddress,
+                    supplierAddress: sellerAddress,
+                    state: cState,
+                },
+                launched: (info) => stdlib.disconnect(info)
+            }))
+            showSuccessToast(`Contract deployed successfully : ${JSON.stringify(info)}`)
+            setContract(ctc)
+            navigate(`/buyer/detail/${encodeURI(JSON.stringify(info))}`)
+        } catch (error) {
+            showErrorToast(error.message)
+            setIsSubmit(true)
+        }
+
+
     }
 
     useEffect( () => {

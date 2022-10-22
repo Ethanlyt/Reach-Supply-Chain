@@ -11,6 +11,7 @@ import ConnectAccount from "./views/ConnectAccount";
 
 import DeployCTC from "./views/DeployCTC/DeployCTC"
 import ContractDetail from "./views/DeployCTC/ContractDetail"
+import BuyerTrack from "./views/DeployCTC/BuyerTrack";
 
 import Order from "./views/AttachContract/Orders";
 import AcceptOrder from "./views/AttachContract/AcceptOrder";
@@ -20,8 +21,8 @@ import SellerTrack from "./views/AttachContract/SellerTrack"
 import ViewAttach from "./views/ViewContract/ViewAttach";
 import Viewer from "./views/ViewContract/Viewer";
 
-import TestDeploy from "./views/Test/TestDeploy";
-import TestInfo from "./views/Test/TestInfo";
+import TestDeploy from './views/test/TestDeploy';
+import TestInfo from './views/test/TestInfo';
 
 
 
@@ -34,17 +35,16 @@ export default function AppRoutes() {
 
         <Route path="/buyer">
             <Route path="deploy" element={<DeployCTC />} />
-            <Route path="detail" element={<ContractDetail />} />
+            <Route path="detail/:ctcInfo" element={<ContractDetail />} />
+            <Route path="track/:ctcInfo" element={<BuyerTrack />} />
         </Route>
         
         <Route path="/seller">
             <Route path="order" element={<Order />} />
-            <Route path="accept" element={<AcceptOrder />} />
-            <Route path="reject" element={<RejectOrder />} />
-            <Route path="track" element={<SellerTrack />} />
+            <Route path="accept/:ctcInfo" element={<AcceptOrder />} />
+            <Route path="reject/:ctcInfo" element={<RejectOrder />} />
+            <Route path="track/:ctcInfo" element={<SellerTrack />} />
         </Route>
-
-       
 
         <Route path='/view'>
             <Route path='attach' element={ <ViewAttach />} />

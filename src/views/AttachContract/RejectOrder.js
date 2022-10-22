@@ -2,17 +2,23 @@ import React, {useState, useContext} from "react"
 import Title from "../components/Title"
 import { Button, Typography, TextField } from "@mui/material"
 import ContractContext from "../../context/ContractContext";
+import { useParams } from "react-router-dom";
+import ContractDetailsTable from "../components/ContractDetailsTable";
 
 
 export default function RejectOrder() {
     const [reason, setReason] = useState("");
     const [isSubmit, setIsSubmit] = useState(false)
+    const {ctcInfo} = useParams()
+    const [cState, setCState] = useState()
+    const [isLoading, setIsLoading] = useState(true)
 
     const {reject} = useContext(ContractContext);
 
     const handleSubmit = () => {
         reject(reason)
         setIsSubmit(true)
+        setIsLoading(false)
     }
 
     return <>
@@ -45,7 +51,13 @@ export default function RejectOrder() {
         </Button>
         </>
         :
+        <>
+            <ContractDetailsTable
+                isLoading={isLoading}
+                contractAddress= { JSON.stringify(JSON.parse(decodeURI(ctcInfo)) ) }
+            />
             <h1><br /><br /> Contract Ended</h1>
+        </>
         }
 
     </>
