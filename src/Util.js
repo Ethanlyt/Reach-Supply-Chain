@@ -6,11 +6,18 @@ import { loadStdlib, ALGO_MyAlgoConnect } from "@reach-sh/stdlib";
 import * as backend from "./reach-backend/index.main.mjs";
 
 
+export const STATE_COLORS = {
+    0: "#2196f3",
+    1: "#4caf50",
+    2: "#aa2e25",
+    3: "#357a38"
+};
+
 export const CONTRACT_STATES = {
     0: "Pending Supplier's Review",
-    1: "Approved",//
+    1: "Approved",
     2: "Rejected",
-    3: "Delivered",//
+    3: "Delivered",
 };
 
 
@@ -25,8 +32,17 @@ stdlib.setWalletFallback(stdlib.walletFallback({
 }));
 
 
-export function deployContract(account) {
-    return account.contract(backend);
+
+// Deploys the contract with given account and details object
+// Once completed, await will return the contract address
+export async function deployContract(account, details) {
+    if (!account) throw Error("No account provided");
+    
+    const ctc = account.contract(backend);
+    return await stdlib.withDisconnect(() => ctc.p.Buyer({
+        details,
+        launched: (info) => stdlib.disconnect(info)
+    }));
 }
 
 // Atomic unit to standard
@@ -55,7 +71,6 @@ export async function getContractHandler(account, ctcInfo) {
     return account.contract( backend, ctcInfo );
 }
 
-
 // On Etherium, contractInfo is a string, return as it is.
 // On Algorand, contractInfo is an BigNumber object, return after parseInt.
 export function parseAddress(address) {
@@ -73,24 +88,40 @@ export async function networkTimeToDateString(networkTime) {
 }
 
 
-export async function getContractViews({ account, ctcInfo, ctc }) {
+
+export async function getContractViews({ 
+    account, ctcInfo,       // Either these 2 info to get contract
+    ctc,                    // Or you pass contract directly
+    // What to include?
+    details = true,
+    contractAddress = true,
+    state = true,
+    listOfIngredients = true,
+    rejectReason = true,
+    deployedNetworkTime = true,
+    reviewedNetworkTime = true,
+    deliveredNetworkTime = true,
+}) {
     if (!ctc) ctc = await getContractHandler(account, ctcInfo);
-    const details = await ctc.unsafeViews.Explorer.details();
 
+    const res = {};
 
-    return {
-        name: details.name,
-        buyerAddress: details.buyerAddress,
-        supplierAddress: details.supplierAddress,
-        contractAddress: parseAddress( await ctc.getInfo() ),
-        state: parseInt( await ctc.unsafeViews.Explorer.state() ),
-        listOfIngredients: (await ctc.unsafeViews.Explorer.listOfIngredients() ).map(parseAddress),
-        rejectReason: await ctc.unsafeViews.Explorer.rejectReason(),
-        // deployedNetworkTime: parseInt(await ctc.unsafeViews.Explorer.deployedNetworkTime() ),
-        deployedNetworkTime: await networkTimeToDateString( await ctc.unsafeViews.Explorer.deployedNetworkTime() ),
-        reviewedNetworkTime: await networkTimeToDateString( await ctc.unsafeViews.Explorer.reviewedNetworkTime() ),
-        deliveredNetworkTime: await networkTimeToDateString( await ctc.unsafeViews.Explorer.deliveredNetworkTime() ),
-    };
+    if (details) {
+        const details = await ctc.unsafeViews.Explorer.details();
+        res.name = details.name;
+        res.buyerAddress = details.buyerAddress;
+        res.supplierAddress = details.supplierAddress;
+    }
+
+    if (contractAddress) res.contractAddress = parseAddress( await ctc.getInfo() );
+    if (state) res.state = parseInt( await ctc.unsafeViews.Explorer.state() );
+    if (listOfIngredients) res.listOfIngredients = (await ctc.unsafeViews.Explorer.listOfIngredients() ).map(parseAddress);
+    if (rejectReason) res.rejectReason = await ctc.unsafeViews.Explorer.rejectReason();
+    if (deployedNetworkTime) res.deployedNetworkTime = await networkTimeToDateString( await ctc.unsafeViews.Explorer.deployedNetworkTime() );
+    if (reviewedNetworkTime) res.reviewedNetworkTime = await networkTimeToDateString( await ctc.unsafeViews.Explorer.reviewedNetworkTime() );
+    if (deliveredNetworkTime) res.deliveredNetworkTime = await networkTimeToDateString( await ctc.unsafeViews.Explorer.deliveredNetworkTime() );
+
+    return res;
 }
 
 

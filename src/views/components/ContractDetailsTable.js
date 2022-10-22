@@ -3,17 +3,9 @@ import { TableContainer, Table, TableBody, TableRow, TableCell } from "@mui/mate
 
 import Loading from "./Loading";
 
-import { CONTRACT_STATES } from "../../Util";
+import { CONTRACT_STATES, STATE_COLORS } from "../../Util";
 
 
-
-
-const STATE_COLOR = {
-    0: "#2196f3",
-    1: "#4caf50",
-    2: "#aa2e25",
-    3: "#357a38"
-};
 
 
 export default function ContractDetailsTable({
@@ -56,7 +48,7 @@ export default function ContractDetailsTable({
                         Status
                     </TableCell>
 
-                    <TableCell sx={{ flex: 1, py: 1, color: STATE_COLOR[state], fontWeight: 'bold' }} align='left' >
+                    <TableCell sx={{ flex: 1, py: 1, color: STATE_COLORS[state], fontWeight: 'bold' }} align='left' >
                         { CONTRACT_STATES[state] }
                     </TableCell>
                 </TableRow>: null
