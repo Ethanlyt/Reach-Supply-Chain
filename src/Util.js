@@ -1,7 +1,5 @@
 // * Main utilities and functions to interact with the backend and reach standard library
 
-
-
 import { loadStdlib, ALGO_MyAlgoConnect } from "@reach-sh/stdlib";
 import * as backend from "./reach-backend/index.main.mjs";
 
@@ -110,7 +108,6 @@ export async function getContractViews({
     deliveredNetworkTime = true,
 }) {
     if (!ctc) ctc = await getContractHandler(account, ctcInfo);
-
     const res = {};
     if (name) res.name = removeNullChar( await ctc.unsafeViews.Explorer.name() );
     if (buyerAddress) res.buyerAddress = parseAddress( await ctc.unsafeViews.Explorer.buyerAddress() );

@@ -7,6 +7,8 @@ import * as backend from '../../reach-backend/index.main.mjs'
 import ContractDetailsTable from "../components/ContractDetailsTable"
 import SnackbarContext from "../../context/SnackbarContext"
 import AppContext from "../../context/AppContext"
+import Loading from "../components/Loading"
+import { getContractHandler, getContractViews } from "../../Util"
 
 export default function AcceptOrder () {
     const navigate = useNavigate()
@@ -16,37 +18,20 @@ export default function AcceptOrder () {
     const { showErrorToast, showSuccessToast } = useContext(SnackbarContext);
     const [ctc, setCtc] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [res, setRes] = useState(null)
 
-    const [name, setName] = useState("");
-    const [buyerAddress, setBuyerAddress] = useState("");
-    const [supplierAddress, setSupplierAddress] = useState("");
-    const [cState, setCState] = useState(0);
-    const [listOfIngredients, setListOfIngredients] = useState([]);
-    const [rejectReason, setRejectReason] = useState("");
-    const [deployedNetworkTime, setDeployedNetworkTime] = useState(0);
-    const [reviewedNetworkTime, setReviewedNetworkTime] = useState(0);
-    const [deliveredNetworkTime, setDeliveredNetworkTime] = useState(0);
-
+    const [ingredientToAdd, setIngredientToAdd] = useState("");
 
     const updateContractViews = useCallback(async () => {
         setIsLoading(true);
 
         try {
-            const { name, buyerAddress, supplierAddress, state } = await ctc.unsafeViews.Explorer.details();
-            setName(name);
-            setBuyerAddress(buyerAddress);
-            setSupplierAddress(supplierAddress);
-            setCState(parseInt(state));
-
-            setListOfIngredients(await ctc.unsafeViews.Explorer.listOfIngredients());
-            setRejectReason(await ctc.unsafeViews.Explorer.rejectReason());
-            setDeployedNetworkTime(parseInt(await ctc.unsafeViews.Explorer.deployedNetworkTime()));
-            setReviewedNetworkTime(parseInt(await ctc.unsafeViews.Explorer.reviewedNetworkTime()));
-            setDeliveredNetworkTime(parseInt(await ctc.unsafeViews.Explorer.deliveredNetworkTime()));
+            setRes(await getContractViews({ ctc: ctc }))
         } catch (e) {
             showErrorToast(e.message);
         }
-
+        showSuccessToast(`Contract retrieve successfully`)
         setIsLoading(false);
     }, [ctc, showErrorToast]);
 
@@ -54,7 +39,7 @@ export default function AcceptOrder () {
         if (!ctcInfo) navigate("/");
 
         try {
-            const ctc = account.contract(backend, decodeURI(ctcInfo));
+            const ctc = getContractHandler(account, decodeURI(ctcInfo));
             setCtc(ctc);
         } catch (e) {
             showErrorToast(e.message);
@@ -72,42 +57,59 @@ export default function AcceptOrder () {
         navigate(`/seller/track/${ctcInfo}`)
     } 
 
+    const submitAddIngredient = async () => {
+        setIsSubmitting(true);
+
+        try {
+            await ctc.a.Seller.addIngredient(ingredientToAdd);
+            showSuccessToast("Ingredient added successfully");
+            setIngredientToAdd("");
+            updateContractViews();
+        } catch (e) {
+            showErrorToast(e.message);
+        }
+
+        setIsSubmitting(false);
+    }
+
     return <>
         <Card sx={{ minWidth: 675 }}>
             <CardContent>
-                {/* <h2 className='text-center'><b>Contract Details</b></h2>
-                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                    Ingredient Name: {ctcinfo}
-                </Typography>
-                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                    Buyer Address: {ctcinfo}
-                </Typography> */}
                 <ContractDetailsTable
                     isLoading={isLoading}
 
-                    contractAddress={decodeURI(ctcInfo)}
-                    name={name}
-                    buyerAddress={buyerAddress}
-                    supplierAddress={supplierAddress}
-                    state={cState}
-                    listOfIngredients={listOfIngredients}
-                    rejectReason={rejectReason}
-                    deployedNetworkTime={deployedNetworkTime}
-                    reviewedNetworkTime={reviewedNetworkTime}
-                    deliveredNetworkTime={deliveredNetworkTime}
+                    contractAddress={res.contractAddress}
+                    name={res.name}
+                    buyerAddress={res.buyerAddress}
+                    supplierAddress={res.supplierAddress}
+                    state={res.state}
+                    listOfIngredients={res.listOfIngredients}
+                    rejectReason={res.rejectReason}
+                    deployedNetworkTime={res.deployedNetworkTime}
+                    reviewedNetworkTime={res.reviewedNetworkTime}
+                    deliveredNetworkTime={res.deliveredNetworkTime}
                 />
             </CardContent>
 
         </Card>
         <br />
+        {isSubmitting ? <Loading message='Submitting ingredient...' /> :
         <Card sx={{ minWidth: 675 }}>
             <CardContent>
-                <h2 className='text-center'><b>List of Address</b></h2>
-                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                    [address here]
-                </Typography>
+                <TextField
+                    className='mb-1 mt-3'
+                    label="Ingredient to add"
+                    variant="filled"
+                    value={ingredientToAdd}
+                    onChange={(e) => setIngredientToAdd(e.target.value)}
+                />
+
+                <Button variant="contained" color="primary" className='mt-4' onClick={submitAddIngredient}>
+                    Add ingredient
+                </Button>
             </CardContent>
         </Card>
+        }
         <br/>
         <Button variant="outlined" onClick={handleSubmit}>
             Accept Order
