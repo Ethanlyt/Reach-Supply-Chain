@@ -4,7 +4,6 @@ import { Typography, Button, TextField } from "@mui/material";
 
 import Title from '../components/Title'
 import Loading from '../components/Loading'
-import ContractContext from '../../context/ContractContext';
 import AppContext from '../../context/AppContext';
 import SnackbarContext from '../../context/SnackbarContext';
 import AccountDetails from '../components/AccountDetails';
@@ -25,7 +24,7 @@ export default function DeployCTC () {
     } = useContext(SnackbarContext)
 
     const handleSubmitDeploy = async () => {
-        if(ingredient === "" || sellerAddress === "") return showErrorToast("Please fill in the required information")
+        if(name === "" || sellerAddress === "") return showErrorToast("Please fill in the required information")
         
         setIsSubmit(false);
 
@@ -36,7 +35,7 @@ export default function DeployCTC () {
                 supplierAddress: sellerAddress,
             });
             showSuccessToast(`Contract deployed successfully : ${ parseAddress(ctcInfo) }`);
-            // setContract(ctc);
+            //Displaying the qr
             navigate(`/buyer/detail/${encodeURI(ctcInfo)}`)
         } catch (error) {
             showErrorToast(error.message);
@@ -62,7 +61,7 @@ export default function DeployCTC () {
                 rows={1}
                 variant="filled"
                 sx={{ minWidth: '400px', maxWidth: '700px' }}
-                value={ingredient}
+                value={name}
                 onChange={(e) => setName(e.target.value)}
             />
             <br />

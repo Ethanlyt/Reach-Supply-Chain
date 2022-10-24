@@ -5,8 +5,8 @@ import { useNavigate, useParams } from "react-router-dom"
 import SnackbarContext from "../../context/SnackbarContext"
 import AppContext from "../../context/AppContext"
 import ContractDetailsTable from "../components/ContractDetailsTable"
-import * as backend from '../../reach-backend/index.main.mjs'
 import StateStepper from "../components/StateStepper"
+import { getContractViews, getContractHandler } from "../../Util"
 
 export default function BuyerTrack() {
     const navigate = useNavigate()
@@ -17,7 +17,7 @@ export default function BuyerTrack() {
     const [ctc, setCtc] = useState(null)
 
     const [cState, setCState] = useState(0)
-
+    const [res, setRes] = useState(null)
 
     const updateContractViews = useCallback(async () => {
         setIsLoading(true);
