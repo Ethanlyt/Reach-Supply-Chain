@@ -22,8 +22,6 @@ import SellerTrack from "./views/AttachContract/SellerTrack"
 import ViewAttach from "./views/ViewContract/ViewAttach";
 import Viewer from "./views/ViewContract/Viewer";
 
-import TestDeploy from './views/Test/TestDeploy';
-import TestInfo from './views/Test/TestInfo';
 
 
 
@@ -52,11 +50,6 @@ export default function AppRoutes() {
         <Route path='/view'>
             <Route path='attach' element={ <ViewAttach />} />
             <Route path=':ctcInfo' element={ <Viewer />} />
-        </Route>
-
-        <Route path="/test">
-            <Route path="deploy" element={ <TestDeploy /> } />
-            <Route path=":ctcInfo" element={ <TestInfo /> } />
         </Route>
 
         <Route path='*' element={<NotFound />} />

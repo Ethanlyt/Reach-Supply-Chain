@@ -79,6 +79,11 @@ export function parseAddress(address) {
 }
 
 
+export function removeNullChar(str) {
+    return str.replace(/\0/g, '');
+}
+
+
 export async function networkTimeToDateString(networkTime) {
     if (parseInt(networkTime) <= 0) return "N/A";
     const secs = parseInt( await stdlib.getTimeSecs( networkTime ) );
@@ -91,7 +96,9 @@ export async function getContractViews({
     account, ctcInfo,       // Either these 2 info to get contract
     ctc,                    // Or you pass contract directly
     // What to include?
-    details = true,
+    name = true,
+    buyerAddress = true,
+    supplierAddress = true,
     contractAddress = true,
     state = true,
     listOfIngredients = true,
@@ -102,18 +109,13 @@ export async function getContractViews({
 }) {
     if (!ctc) ctc = await getContractHandler(account, ctcInfo);
     const res = {};
-
-    if (details) {
-        const details = await ctc.unsafeViews.Explorer.details();
-        res.name = details.name;
-        res.buyerAddress = details.buyerAddress;
-        res.supplierAddress = details.supplierAddress;
-    }
-
+    if (name) res.name = removeNullChar( await ctc.unsafeViews.Explorer.name() );
+    if (buyerAddress) res.buyerAddress = parseAddress( await ctc.unsafeViews.Explorer.buyerAddress() );
+    if (supplierAddress) res.supplierAddress = parseAddress( await ctc.unsafeViews.Explorer.supplierAddress() );
     if (contractAddress) res.contractAddress = parseAddress( await ctc.getInfo() );
     if (state) res.state = parseInt( await ctc.unsafeViews.Explorer.state() );
     if (listOfIngredients) res.listOfIngredients = (await ctc.unsafeViews.Explorer.listOfIngredients() ).map(parseAddress);
-    if (rejectReason) res.rejectReason = await ctc.unsafeViews.Explorer.rejectReason();
+    if (rejectReason) res.rejectReason = removeNullChar( await ctc.unsafeViews.Explorer.rejectReason() );
     if (deployedNetworkTime) res.deployedNetworkTime = await networkTimeToDateString( await ctc.unsafeViews.Explorer.deployedNetworkTime() );
     if (reviewedNetworkTime) res.reviewedNetworkTime = await networkTimeToDateString( await ctc.unsafeViews.Explorer.reviewedNetworkTime() );
     if (deliveredNetworkTime) res.deliveredNetworkTime = await networkTimeToDateString( await ctc.unsafeViews.Explorer.deliveredNetworkTime() );

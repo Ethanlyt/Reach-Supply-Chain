@@ -37,14 +37,7 @@ export default function Home() {
             >
                 View Contract
             </Button>
-
-            <Button
-                variant="outlined"
-                size="large"
-                onClick={ ()=> navigate('/test/deploy') }
-            >
-                Deploy Test Contract
-            </Button>
+            
         </div>
     </>;
 }
