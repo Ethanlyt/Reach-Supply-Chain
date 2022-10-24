@@ -16,44 +16,44 @@ export default function BuyerTrack() {
     const [isLoading, setIsLoading] = useState(true)
     const [ctc, setCtc] = useState(null)
 
-    const [ingredient, setIngredient] = useState("")
-    const [sellerAddress, setSellerAddress] = useState("")
-    const [buyerAddress, setBuyerAddress] = useState("")
     const [cState, setCState] = useState(0)
 
 
     const updateContractViews = useCallback(async () => {
-        setIsLoading(true)
+        setIsLoading(true);
+
         try {
-            const { ingredientName, buyerAddress, supplierAddress, state } = await ctc.unsafeViews.Explorer.details()
-            setIngredient(ingredientName)
-            setSellerAddress(supplierAddress)
-            setBuyerAddress(buyerAddress)
-            setCState(parseInt(state))
-        } catch (error) {
-            showErrorToast(error.message)
+            setRes(await getContractViews({ ctc: ctc }))
+        } catch (e) {
+            showErrorToast(e.message);
         }
-        setIsLoading(false)
-    })
+        showSuccessToast(`Contract retrieve successfully`)
+        setIsLoading(false);
+    }, [ctc, showErrorToast]);
 
     useEffect(() => {
         if (!ctcInfo) navigate("/")
 
         try {
-            const ctc = account.contract(backend, decodeURI(ctcInfo));
+            const ctc = getContractHandler(account, decodeURI(ctcInfo));
             setCtc(ctc);
         } catch (e) {
             showErrorToast(e.message);
         }
     }, [ctcInfo, navigate, showErrorToast]);
 
+    useEffect(() => {
+        if (!ctc) return;
+        updateContractViews();
+    }, [ctc, updateContractViews]);
+    
     const onReceived = () => {
         setCState(prevState => prevState + 1)
     }
 
     return <>
         <Title />
-        <StateStepper state={cState} />
+        <StateStepper state={res.state} />
         {cState === 1 && 
             <Button variant="contained" color="primary" className='mt-4' onClick={onReceived}>
                 Order Received
@@ -66,10 +66,10 @@ export default function BuyerTrack() {
                         <ContractDetailsTable
                             isLoading={isLoading}
 
-                            contractAddress={decodeURI(ctcInfo)}
-                            name={ingredient}
-                            buyerAddress={buyerAddress}
-                            supplierAddress={sellerAddress}
+                            contractAddress={res.contractAddress}
+                            name={res.name}
+                            buyerAddress={res.buyerAddress}
+                            supplierAddress={res.supplierAddress}
                         />
                     </CardContent>
                 </Card>

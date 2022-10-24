@@ -13,16 +13,10 @@ import {deployContract, parseAddress, stdlib} from '../../Util'
 
 export default function DeployCTC () {
     const navigate = useNavigate()
-    const [ingredient, setIngredient] = useState("")
-    const [buyerAddress, setBuyerAddress] = useState("")
+    const [name, setName] = useState("")
     const [sellerAddress, setSellerAddress] = useState("")
-    const [cState, setCState] = useState(0)
-
     const [isSubmit, setIsSubmit] = useState(true)
 
-    const {
-        contract, setContract
-    } = useContext(ContractContext)
     const {
         account
     } = useContext(AppContext)
@@ -37,10 +31,9 @@ export default function DeployCTC () {
 
         try {
             const ctcInfo = await deployContract(account, {
-                name : ingredient,
-                buyerAddress: sellerAddress,
+                name: name,
+                buyerAddress: account,
                 supplierAddress: sellerAddress,
-                state: 0,
             });
             showSuccessToast(`Contract deployed successfully : ${ parseAddress(ctcInfo) }`);
             // setContract(ctc);
@@ -70,7 +63,7 @@ export default function DeployCTC () {
                 variant="filled"
                 sx={{ minWidth: '400px', maxWidth: '700px' }}
                 value={ingredient}
-                onChange={(e) => setIngredient(e.target.value)}
+                onChange={(e) => setName(e.target.value)}
             />
             <br />
             <TextField

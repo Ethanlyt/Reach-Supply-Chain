@@ -25,7 +25,7 @@ export default function ContractDetail () {
     const [isLoading, setIsLoading] = useState(false)
     const {ctcInfo} = useParams();
 
-    const [url, seturl] = useState("")
+    const [url, setUrl] = useState("")
     const [ctc, setCtc] = useState(null)
 
     const [ingredient, setIngredient] = useState("")
@@ -35,21 +35,17 @@ export default function ContractDetail () {
     const [reviewedNetworkTime, setReviewedNetworkTime] = useState(0);
     const [deliveredNetworkTime, setDeliveredNetworkTime] = useState(0);
 
-    const updateContractViews = useCallback(async() => {
-        setIsLoading(true)
-        try{
-            const { ingredientName, supplierAddress, state} = await ctc.unsafeViews.Explorer.details()
-            setIngredient(ingredientName)
-            setSellerAddress(supplierAddress)
-            setCState(parseInt(state))
-            setDeployedNetworkTime(parseInt(await ctc.unsafeViews.Explorer.deployedNetworkTime()));
-            setReviewedNetworkTime(parseInt(await ctc.unsafeViews.Explorer.reviewedNetworkTime()));
-            setDeliveredNetworkTime(parseInt(await ctc.unsafeViews.Explorer.deliveredNetworkTime()));
-        } catch (error) {
-            showErrorToast(error.message)
+    const updateContractViews = useCallback(async () => {
+        setIsLoading(true);
+
+        try {
+            setRes(await getContractViews({ ctc: ctc }))
+        } catch (e) {
+            showErrorToast(e.message);
         }
-        setIsLoading(false)
-    })
+        showSuccessToast(`Contract retrieve successfully`)
+        setIsLoading(false);
+    }, [ctc, showErrorToast]);
 
 
     useEffect(() => {
@@ -65,7 +61,7 @@ export default function ContractDetail () {
         } catch (e) {
             showErrorToast(e.message);
         }
-        seturl(`http://localhost:3000/Morra-Smart-Contract#/seller/order/${ctcInfo}`)
+        setUrl(`http://localhost:3000/Morra-Smart-Contract#/seller/order/${ctcInfo}`)
     }, [ctcInfo, navigate, showErrorToast]);
 
     useEffect(() => {
@@ -92,21 +88,14 @@ export default function ContractDetail () {
         <br />
         <Card sx={{ minWidth: 300, maxWidth: '90vw', width: '100%'}}>
             <CardContent>
-                {/* <h2 className='text-center'><b>Contract Details</b></h2>
-                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                    Ingredient Name: {ingredient}
-                </Typography>
-                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                    Seller Address: {sellerAddress}
-                </Typography> */}
                 <ContractDetailsTable
                     isLoading={isLoading}
-                    contractAddress={decodeURI(ctcInfo)}
-                    name={ingredient}
-                    supplierAddress={sellerAddress}
-                    deployedNetworkTime={deployedNetworkTime}
-                    reviewedNetworkTime={reviewedNetworkTime}
-                    deliveredNetworkTime={deliveredNetworkTime}
+                    contractAddress={res.contractAddress}
+                    name={res.name}
+                    supplierAddress={res.supplierAddress}
+                    deployedNetworkTime={res.deployedNetworkTime}
+                    reviewedNetworkTime={res.reviewedNetworkTime}
+                    deliveredNetworkTime={res.deliveredNetworkTime}
                 />
             </CardContent>    
         </Card>
