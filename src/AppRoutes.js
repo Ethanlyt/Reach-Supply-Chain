@@ -13,6 +13,7 @@ import DeployCTC from "./views/DeployCTC/DeployCTC"
 import ContractDetail from "./views/DeployCTC/ContractDetail"
 import BuyerTrack from "./views/DeployCTC/BuyerTrack";
 
+import AttachRole from "./views/AttachContract/AttachRole";
 import Order from "./views/AttachContract/Orders";
 import AcceptOrder from "./views/AttachContract/AcceptOrder";
 import RejectOrder from "./views/AttachContract/RejectOrder";
@@ -38,9 +39,11 @@ export default function AppRoutes() {
             <Route path="detail/:ctcInfo" element={<ContractDetail />} />
             <Route path="track/:ctcInfo" element={<BuyerTrack />} />
         </Route>
+
+        <Route path="/contract/role"  element={<AttachRole />} />
         
         <Route path="/seller">
-            <Route path="order" element={<Order />} />
+            <Route path="order/:ctcInfo" element={<Order />} />
             <Route path="accept/:ctcInfo" element={<AcceptOrder />} />
             <Route path="reject/:ctcInfo" element={<RejectOrder />} />
             <Route path="track/:ctcInfo" element={<SellerTrack />} />

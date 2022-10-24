@@ -1,7 +1,5 @@
 // * Main utilities and functions to interact with the backend and reach standard library
 
-
-
 import { loadStdlib, ALGO_MyAlgoConnect } from "@reach-sh/stdlib";
 import * as backend from "./reach-backend/index.main.mjs";
 
@@ -103,7 +101,6 @@ export async function getContractViews({
     deliveredNetworkTime = true,
 }) {
     if (!ctc) ctc = await getContractHandler(account, ctcInfo);
-
     const res = {};
 
     if (details) {
