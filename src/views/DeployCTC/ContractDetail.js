@@ -30,7 +30,7 @@ export default function ContractDetail () {
         setIsLoading(true);
 
         try {
-            setRes(await getContractViews({ ctc: ctc }))
+            setRes(await getContractViews({ account: account, ctcInfo: ctcInfo }))
         } catch (e) {
             showErrorToast(e.message);
         }
@@ -47,8 +47,7 @@ export default function ContractDetail () {
         if(!ctcInfo) navigate("/")
 
         try {
-            const ctc = getContractHandler(account, decodeURI(ctcInfo));
-            setCtc(ctc);
+            setCtc(getContractHandler(account, decodeURI(ctcInfo)));
         } catch (e) {
             showErrorToast(e.message);
         }
@@ -83,12 +82,12 @@ export default function ContractDetail () {
             <CardContent>
                 <ContractDetailsTable
                     isLoading={isLoading}
-                    contractAddress={res.contractAddress}
-                    name={res.name}
-                    supplierAddress={res.supplierAddress}
-                    deployedNetworkTime={res.deployedNetworkTime}
-                    reviewedNetworkTime={res.reviewedNetworkTime}
-                    deliveredNetworkTime={res.deliveredNetworkTime}
+                    contractAddress={res?.contractAddress}
+                    name={res?.name}
+                    supplierAddress={res?.supplierAddress}
+                    deployedNetworkTime={res?.deployedNetworkTime}
+                    reviewedNetworkTime={res?.reviewedNetworkTime}
+                    deliveredNetworkTime={res?.deliveredNetworkTime}
                 />
             </CardContent>    
         </Card>

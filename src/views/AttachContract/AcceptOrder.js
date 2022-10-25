@@ -27,7 +27,7 @@ export default function AcceptOrder () {
         setIsLoading(true);
 
         try {
-            setRes(await getContractViews({ ctc: ctc }))
+            setRes(await getContractViews({ account: account, ctcInfo: ctcInfo }))
         } catch (e) {
             showErrorToast(e.message);
         }
@@ -39,8 +39,7 @@ export default function AcceptOrder () {
         if (!ctcInfo) navigate("/");
 
         try {
-            const ctc = getContractHandler(account, decodeURI(ctcInfo));
-            setCtc(ctc);
+            setCtc(getContractHandler(account, decodeURI(ctcInfo)));
         } catch (e) {
             showErrorToast(e.message);
         }
