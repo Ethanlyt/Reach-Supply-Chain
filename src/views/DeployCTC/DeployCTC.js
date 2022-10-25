@@ -4,7 +4,6 @@ import { Typography, Button, TextField } from "@mui/material";
 
 import Title from '../components/Title'
 import Loading from '../components/Loading'
-import ContractContext from '../../context/ContractContext';
 import AppContext from '../../context/AppContext';
 import SnackbarContext from '../../context/SnackbarContext';
 import AccountDetails from '../components/AccountDetails';
@@ -13,16 +12,10 @@ import {deployContract, parseAddress, stdlib} from '../../Util'
 
 export default function DeployCTC () {
     const navigate = useNavigate()
-    const [ingredient, setIngredient] = useState("")
-    const [buyerAddress, setBuyerAddress] = useState("")
+    const [name, setName] = useState("")
     const [sellerAddress, setSellerAddress] = useState("")
-    const [cState, setCState] = useState(0)
-
     const [isSubmit, setIsSubmit] = useState(true)
 
-    const {
-        contract, setContract
-    } = useContext(ContractContext)
     const {
         account
     } = useContext(AppContext)
@@ -31,19 +24,18 @@ export default function DeployCTC () {
     } = useContext(SnackbarContext)
 
     const handleSubmitDeploy = async () => {
-        if(ingredient === "" || sellerAddress === "") return showErrorToast("Please fill in the required information")
+        if(name === "" || sellerAddress === "") return showErrorToast("Please fill in the required information")
         
         setIsSubmit(false);
 
         try {
             const ctcInfo = await deployContract(account, {
-                name : ingredient,
-                buyerAddress: sellerAddress,
+                name: name,
+                buyerAddress: account,
                 supplierAddress: sellerAddress,
-                state: 0,
             });
             showSuccessToast(`Contract deployed successfully : ${ parseAddress(ctcInfo) }`);
-            // setContract(ctc);
+            //Displaying the qr
             navigate(`/buyer/detail/${encodeURI(ctcInfo)}`)
         } catch (error) {
             showErrorToast(error.message);
@@ -69,8 +61,8 @@ export default function DeployCTC () {
                 rows={1}
                 variant="filled"
                 sx={{ minWidth: '400px', maxWidth: '700px' }}
-                value={ingredient}
-                onChange={(e) => setIngredient(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
             />
             <br />
             <TextField

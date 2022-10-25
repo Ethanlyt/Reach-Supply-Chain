@@ -3,56 +3,50 @@ import Title from "../components/Title"
 import { Button, Card, CardContent, Typography, TextField } from "@mui/material"
 import ContractDetailsTable from "../components/ContractDetailsTable"
 import { useNavigate, useParams } from "react-router-dom"
-import Box from '@mui/material/Box';
-import Stepper from '@mui/material/Stepper';
-import Step from '@mui/material/Step';
-import StepLabel from '@mui/material/StepLabel';
+import StateStepper from "../components/StateStepper"
 import * as backend from '../../reach-backend/index.main.mjs'
 import AppContext from "../../context/AppContext"
 import SnackbarContext from "../../context/SnackbarContext"
+import { getContractViews, getContractHandler } from "../../Util"
 
 
 export default function SellerTrack () {
     const {ctcInfo} = useParams()
     const {account} = useContext(AppContext)
-    const {showErrorToast} = useContext(SnackbarContext)
+    const {showErrorToast, showSuccessToast} = useContext(SnackbarContext)
     const navigate = useNavigate()
 
     const [isLoading, setIsLoading] = useState(true)
-    const [ingredient, setIngredient] = useState("")
-    const [buyerAddress, setBuyerAddress] = useState("")
-    const [cState, setCState] = useState(0)
     const [ctc, setCtc] = useState(null)
-
-    const steps = [
-        'Contract Approved. Waiting buyer to verify deliver',
-        'Product Delivered. Buyer verified the product',
-    ];
+    const [res, setRes] = useState(null)
 
     const updateContractViews = useCallback(async () => {
-        setIsLoading(true)
+        setIsLoading(true);
+
         try {
-            const { ingredientName, buyerAddress, state } = await ctc.unsafeViews.Explorer.details()
-            setIngredient(ingredientName)
-            setBuyerAddress(buyerAddress)
-            setBuyerAddress(buyerAddress)
-            setCState(parseInt(state))
-        } catch (error) {
-            showErrorToast(error.message)
+            setRes(await getContractViews({ ctc: ctc }))
+        } catch (e) {
+            showErrorToast(e.message);
         }
-        setIsLoading(false)
-    })
+        showSuccessToast(`Contract retrieve successfully`)
+        setIsLoading(false);
+    }, [ctc, showErrorToast]);
 
     useEffect(() => {
         if (!ctcInfo) navigate("/")
 
         try {
-            const ctc = account.contract(backend, decodeURI(ctcInfo));
+            const ctc = getContractHandler(account, decodeURI(ctcInfo));
             setCtc(ctc);
         } catch (e) {
             showErrorToast(e.message);
         }
     }, [ctcInfo, navigate, showErrorToast]);
+
+    useEffect(() => {
+        if (!ctc) return;
+        updateContractViews();
+    }, [ctc, updateContractViews]);
 
     return <>
         <Title />
@@ -61,23 +55,16 @@ export default function SellerTrack () {
                 <ContractDetailsTable
                     isLoading={isLoading}
 
-                    contractAddress={decodeURI(ctcInfo)}
-                    name={ingredient}
-                    buyerAddress={buyerAddress}
+                    contractAddress={res.contractAddress}
+                    name={res.name}
+                    buyerAddress={res.buyerAddress}
                 />
             </CardContent>
         </Card>
         <br />
-        <Box sx={{ width: '100%' }}>
-            <Stepper activeStep={cState} alternativeLabel>
-                {steps.map((label) => (
-                    <Step key={label}>
-                        <StepLabel>{label}</StepLabel>
-                    </Step>
-                ))}
-            </Stepper>
-        </Box>
-        {cState === 4 && 
+        <StateStepper state={res.state} />
+
+        {res.state === 4 && 
             <h2>Contract Ended</h2>    
         }
         
