@@ -8,15 +8,15 @@ import ContractDetailsTable from "../components/ContractDetailsTable";
 
 export default function RejectOrder() {
     const [reason, setReason] = useState("");
-    const [isSubmit, setIsSubmit] = useState(false)
+    const [isSubmit, setIsSubmit] = useState(true)
     const {ctcInfo} = useParams()
     const [isLoading, setIsLoading] = useState(true)
 
     const {reject} = useContext(ContractContext);
 
-    const handleSubmit = () => {
-        reject(reason)
-        setIsSubmit(true)
+    const handleSubmit = async() => {
+        await reject(reason)
+        setIsSubmit(false)
         setIsLoading(false)
     }
 
@@ -26,7 +26,7 @@ export default function RejectOrder() {
         <h3><i>You are <strong>Seller</strong></i></h3>
 
 
-        {!isSubmit ? <>
+        {isSubmit ? <>
         <Typography variant="subtitle1" gutterBottom className='lead text-muted mb-4'>
             Please state your reason (optional)
         </Typography>

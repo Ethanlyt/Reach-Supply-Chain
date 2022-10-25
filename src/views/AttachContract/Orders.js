@@ -9,6 +9,7 @@ import SnackbarContext from "../../context/SnackbarContext"
 import { useNavigate, useParams } from "react-router-dom"
 import { getContractHandler, getContractViews } from "../../Util"
 import ContractDetailsTable from "../components/ContractDetailsTable"
+import ConnectAccount from "../ConnectAccount"
 
 export default function Order () {
     const navigate = useNavigate()
@@ -19,7 +20,7 @@ export default function Order () {
     const [isLoading, setIsLoading] = useState(true)
     const [ctc, setCtc] = useState(null)
 
-    const [res , setRes] = useState(null)
+    const [res , setRes] = useState({})
     
     const updateContractViews = useCallback(async () => {
         setIsLoading(true);
@@ -33,9 +34,6 @@ export default function Order () {
         setIsLoading(false);
     }, [ctc, showErrorToast]);
 
-    useEffect(() => {
-        if (!account) navigate("/");
-    }, [account, navigate]);
 
     useEffect(() => {
         // if (!ctcInfo) navigate("/");
@@ -59,6 +57,8 @@ export default function Order () {
     const handleReject = () => {
         navigate(`/seller/reject/${ctcInfo}`)
     }
+
+    if (!account) return <ConnectAccount />
 
     return <>
         <Title />

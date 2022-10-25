@@ -18,26 +18,26 @@ export default function ViewAttach() {
     const { showErrorToast, showSuccessToast } = useContext(SnackbarContext);
     // const [res ,setRes] = useState(null)
     const {account} = useContext(AppContext)
+    const [res, setRes] = useState({})
 
 
     const onSubmit = async ()=> {
         setIsLoading(true)
-        const res = {}
+       
         if (!ctcInfoInput) return showErrorToast('Please enter the contract information');
 
         try { 
             parseAddress(ctcInfoInput)
-            res = await getContractViews({account: account, 
+            setRes(await getContractViews({account: account, 
                 ctcInfo: ctcInfoInput,
                 contractAddress:false,
                 listOfIngredients:false,
                 rejectReason:false,
                 deployedNetworkTime:false,
                 reviewedNetworkTime:false,
-                deliveredNetworkTime:false})
+                deliveredNetworkTime:false}))
         } 
         catch (e) { return showErrorToast(e.message) }
-        console.log(res)
         setIsLoading(false)
         // if state is delivered, navigate to view
         // if state is not delivered, examine the account is an buyer or seller, 
