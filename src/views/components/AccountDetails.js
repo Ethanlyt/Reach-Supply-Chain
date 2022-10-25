@@ -1,11 +1,12 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Typography, Card, CardContent, } from "@mui/material"
+import { Typography, Card, CardContent, Button } from "@mui/material"
 
 import { stdlib, getBalance } from "../../Util";
 import AppContext from "../../context/AppContext"
 
 import Loading from "./Loading";
+import ConnectAccount from "./ConnectAccount";
 
 
 
@@ -13,16 +14,17 @@ export default function AccountDetails() {
 
     const { account } = useContext(AppContext);
 
-    const [ isLoading, setIsLoading ] = React.useState(true);
-    const [ isNotConnected, setIsNotConnected ] = React.useState(false);
-    const [ address, setAddress ] = React.useState('');
-    const [ balance, setBalance ] = React.useState(0);
-    const [ standardUnit, setStandardUnit ] = React.useState('');
+    const [ isLoading, setIsLoading ] = useState(true);
+    const [ address, setAddress ] = useState('');
+    const [ balance, setBalance ] = useState(0);
+    const [ standardUnit, setStandardUnit ] = useState('');
+    const [ isConnectingAccount, setIsConnectingAccount ] = useState(false);
 
     
     useEffect(() => {
         (async ()=> {
-            if (!account) return setIsNotConnected(true);
+            if (!account) return;
+            setIsConnectingAccount(false);
             
             const bal = await getBalance(account);
             setAddress(account.getAddress());
@@ -33,13 +35,20 @@ export default function AccountDetails() {
     }, [account]);
 
 
+    const isNotConnected = !account;
+
+
     return <Card sx={{ minWidth: 275 }} className='my-4'>
         <CardContent>
 
         {
-            isNotConnected?
+            isConnectingAccount ?
+            <ConnectAccount />
+            :
+            isNotConnected ?
             <Typography variant="subtitle1" className='lead'>
-                You are currently not connected to any wallet. <Link to='/'>Connect now</Link>
+                You are currently not connected to any wallet. 
+                <Button onClick={()=> setIsConnectingAccount(true)}>Connect Now</Button>
             </Typography>
             :
             isLoading ?

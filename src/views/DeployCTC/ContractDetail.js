@@ -30,7 +30,7 @@ export default function ContractDetail () {
         setIsLoading(true);
 
         try {
-            setRes(await getContractViews({ ctc: ctc }))
+            setRes(await getContractViews({ ctc: ctc }));
         } catch (e) {
             showErrorToast(e.message);
         }
@@ -70,7 +70,6 @@ export default function ContractDetail () {
         showSuccessToast("Saved QR, please share QR to the seller");
     }
     
-
     return <>
         <Title />
         <AccountDetails />
@@ -79,16 +78,19 @@ export default function ContractDetail () {
         <br />
         <span><i><strong>To view your contract information, kindly remember the contract address and view the progress in 'Attach Contract'</strong></i></span>
         <br />
+
+
+
         <Card sx={{ minWidth: 300, maxWidth: '90vw', width: '100%'}}>
             <CardContent>
                 <ContractDetailsTable
                     isLoading={isLoading}
-                    contractAddress={res.contractAddress}
-                    name={res.name}
-                    supplierAddress={res.supplierAddress}
-                    deployedNetworkTime={res.deployedNetworkTime}
-                    reviewedNetworkTime={res.reviewedNetworkTime}
-                    deliveredNetworkTime={res.deliveredNetworkTime}
+                    contractAddress={res?.contractAddress}
+                    name={res?.name}
+                    supplierAddress={res?.supplierAddress}
+                    deployedNetworkTime={res?.deployedNetworkTime}
+                    reviewedNetworkTime={res?.reviewedNetworkTime}
+                    deliveredNetworkTime={res?.deliveredNetworkTime}
                 />
             </CardContent>    
         </Card>
