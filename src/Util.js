@@ -22,7 +22,7 @@ export const CONTRACT_STATES = {
 
 export const stdlib = loadStdlib({
     ...process.env,
-    // 'REACH_CONNECTOR_MODE': 'ALGO',
+    'REACH_CONNECTOR_MODE': 'ALGO',
 });
 
 stdlib.setWalletFallback(stdlib.walletFallback({
@@ -37,10 +37,12 @@ export async function deployContract(account, details) {
     if (!account) throw Error("No account provided");
     
     const ctc = account.contract(backend);
-    return await stdlib.withDisconnect(() => ctc.p.Buyer({
+    await stdlib.withDisconnect(() => ctc.p.Buyer({
         details,
         launched: (info) => stdlib.disconnect(info)
     }));
+
+    return parseAddress(await ctc.getInfo() );
 }
 
 // Atomic unit to standard
@@ -124,3 +126,19 @@ export async function getContractViews({
 }
 
 
+// APIS
+export async function supplierAddIngredient(contract, ingredient) {
+    return await contract.a.SellerAPI.addIngredient(ingredient);
+}
+
+export async function supplierAccept(contract) {
+    return await contract.a.SellerAPI.accept();
+}
+
+export async function supplierReject(contract, reason) {
+    return await contract.a.SellerAPI.reject(reason);
+}
+
+export async function buyerDelivered(contract) {
+    return await contract.a.BuyerAPI.delivered();
+}

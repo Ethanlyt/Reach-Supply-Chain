@@ -69,7 +69,6 @@ export default function ContractDetail () {
         showSuccessToast("Saved QR, please share QR to the seller");
     }
     
-
     return <>
         <Title />
         <AccountDetails />
@@ -78,6 +77,9 @@ export default function ContractDetail () {
         <br />
         <span><i><strong>To view your contract information, kindly remember the contract address and view the progress in 'Attach Contract'</strong></i></span>
         <br />
+
+
+
         <Card sx={{ minWidth: 300, maxWidth: '90vw', width: '100%'}}>
             <CardContent>
                 <ContractDetailsTable

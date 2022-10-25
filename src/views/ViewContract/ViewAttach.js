@@ -40,13 +40,12 @@ export default function ViewAttach() {
         catch (e) { return showErrorToast(e.message) }
         setIsLoading(false)
         // if state is delivered, navigate to view
-        // if state is not delivered, examine the account is an buyer or seller, 
-            // then navigate to sellerTrack or buyerTrack 
+        // if state is not delivered, examine the account is an buyer or seller, then navigate to sellerTrack or buyerTrack 
 
-        if (res.buyerAddress === account.getAddress() && res.state !== 1 ) return navigate(`/buyer/track/${encodeURI(ctcInfoInput)}`)
-        else if (res.supplierAddress === account.getAddress() && res.state === 0) return navigate(`/seller/order/${encodeURI(ctcInfoInput)}`)
+        if (res.buyerAddress === account.getAddress() && res.state !== 1 ) return navigate(`/buyer/track/${encodeURI(ctcInfoInput)}`);
+        else if (res.supplierAddress === account.getAddress() && res.state === 0) return navigate(`/seller/order/${encodeURI(ctcInfoInput)}`);
 
-        showSuccessToast(`Displaying a delivered contract`)
+        showSuccessToast(`Displaying contract: ${ctcInfoInput}`);
         navigate(`/view/${encodeURI(ctcInfoInput)}`);   
     }
     
@@ -67,6 +66,7 @@ export default function ViewAttach() {
             value={ctcInfoInput}
             onChange={(e)=> setCtcInfoInput(e.target.value)}
         />
+
         {isLoading ? <Loading message="Retrieving contract data" /> :
         
         <Button onClick={ onSubmit } variant="contained" className='my-2'>

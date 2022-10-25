@@ -10,6 +10,7 @@ export default function Home() {
 
     return <>
         <Title />
+        
         <AccountDetails />
         
         <div className="d-flex flex-column gap-3">

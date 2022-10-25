@@ -16,12 +16,14 @@ export default function DeployCTC () {
     const [sellerAddress, setSellerAddress] = useState("")
     const [isSubmit, setIsSubmit] = useState(true)
 
+
     const {
         account
-    } = useContext(AppContext)
+    } = useContext(AppContext);
+
     const {
         showErrorToast, showSuccessToast
-    } = useContext(SnackbarContext)
+    } = useContext(SnackbarContext);
 
     const handleSubmitDeploy = async () => {
         if(name === "" || sellerAddress === "") return showErrorToast("Please fill in the required information")
@@ -41,9 +43,8 @@ export default function DeployCTC () {
             showErrorToast(error.message);
             setIsSubmit(true);
         }
-
-
     }
+
 
     useEffect( () => {
         if (!account) navigate('/')

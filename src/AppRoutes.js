@@ -7,7 +7,6 @@ import {
 import Home from "./views/Home"
 import Error from "./views/Error";
 import NotFound from "./views/NotFound";
-import ConnectAccount from "./views/ConnectAccount";
 
 import DeployCTC from "./views/DeployCTC/DeployCTC"
 import ContractDetail from "./views/DeployCTC/ContractDetail"
@@ -28,9 +27,8 @@ import Viewer from "./views/ViewContract/Viewer";
 export default function AppRoutes() {
     
     return <Routes>
-        <Route path="/" element={<ConnectAccount />} />
+        <Route path="/" element={<Home />} />
         <Route path="error" element={<Error />} />
-        <Route path="/home" element={<Home />} />
 
         <Route path="/buyer">
             <Route path="deploy" element={<DeployCTC />} />
