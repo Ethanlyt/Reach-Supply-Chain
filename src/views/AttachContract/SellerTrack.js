@@ -52,6 +52,7 @@ export default function SellerTrack () {
 
     return <>
         <Title />
+        <h3><i>You are <strong>Seller</strong></i></h3>
         <Card>
             <CardContent>
                 <ContractDetailsTable
