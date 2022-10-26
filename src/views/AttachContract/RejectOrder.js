@@ -49,6 +49,10 @@ export default function RejectOrder() {
         setIsLoading(false)
         
     }
+    
+    const toHome = () => {
+        navigate('/')
+    }
 
     return <>
         <Title />
@@ -71,6 +75,7 @@ export default function RejectOrder() {
         />
         </>
         }
+        {isSubmit && isLoading && isfinish && <Loading message="Rejecting contract" />}
 
         {isRetrievingCtc == false && isSubmit == false && isfinish == false && 
         <Button
@@ -82,13 +87,21 @@ export default function RejectOrder() {
         </Button>
         }
 
-        {isSubmit == true && isRetrievingCtc == false && isfinish == true && 
+        {isSubmit == false && isRetrievingCtc == false && isfinish == true && 
         <>
-            <Loading message="Rejecting contract" />
             <ContractDetailsTable
                 isLoading={isLoading}
                 contractAddress={decodeURI(ctcInfo)}
             />
+            <br />
+            <h3 className="text-danger" >Contract Rejected Successfully</h3>
+            <Button
+                onClick={toHome}
+                variant="contained"
+                className='my-2'
+            >
+                Back to home
+            </Button>
         </>
         
         }

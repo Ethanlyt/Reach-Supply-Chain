@@ -16,7 +16,7 @@ export default function SellerTrack () {
     const navigate = useNavigate()
 
     const [isLoading, setIsLoading] = useState(true)
-    const [ctc, setCtc] = useState(null)
+    const [ctc, setCtc] = useState({})
     const [res, setRes] = useState({})
 
     const updateContractViews = useCallback(async () => {

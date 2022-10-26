@@ -12,14 +12,13 @@ import ContractDetailsTable from "../components/ContractDetailsTable"
 import ConnectAccount from "../ConnectAccount"
 
 export default function Order () {
-    const navigate = useNavigate()
-    const { contract } = useContext(ContractContext);
-    const {ctcInfo} = useParams()
+    const navigate = useNavigate();
+    const { ctcInfo } = useParams()
     const { account } = useContext(AppContext)
     const { showSuccessToast, showErrorToast} = useContext(SnackbarContext)
     const [isLoading, setIsLoading] = useState(true)
-    const [ctc, setCtc] = useState(null)
 
+    const [ctc, setCtc] = useState({})
     const [res , setRes] = useState({})
     
     const updateContractViews = useCallback(async () => {
@@ -36,18 +35,17 @@ export default function Order () {
 
 
     useEffect(() => {
-        //
-        async function getContract() {
-            await getContractHandler(account, decodeURI(ctcInfo))
-        }
-        //
         if (!ctcInfo) navigate("/")
 
-        try {
-            setCtc(getContract());
-        } catch (e) {
-            showErrorToast(e.message);
-        }
+        (async () => {
+            try {
+                const res = await getContractHandler(account, ctcInfo);
+                setCtc(res)
+            } catch (e) {
+                showErrorToast(e.message);
+            }
+            
+        })();
     }, [ctcInfo, navigate, showErrorToast]);
 
     useEffect(() => {
@@ -69,9 +67,8 @@ export default function Order () {
         <Title />
         <AccountDetails />
         <h3><i>You are <strong>Seller</strong></i></h3>
-
         
-        {contract ? <Loading message="Displaying contract..." />
+        {!ctc ? <Loading message="Displaying contract..." />
         :
         <div>
             <Card>

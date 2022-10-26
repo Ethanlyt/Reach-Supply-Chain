@@ -138,8 +138,6 @@ export async function supplierAccept(contract) {
     return await contract.a.SellerAPI.approve();
 }
 
-
-
 export async function buyerDelivered(contract) {
     return await contract.a.BuyerAPI.delivered();
 }

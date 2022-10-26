@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Typography, Button, TextField } from "@mui/material";
-
+import ConnectAccount from "../components/ConnectAccount";
 import SnackbarContext from "../../context/SnackbarContext";
 import Title from "../components/Title";
 import AppContext from "../../context/AppContext";
@@ -15,18 +15,17 @@ export default function AttachRole () {
     const [ctcInfoInput, setCtcInfoInput] = useState('');
     const [isLoading, setIsLoading] = useState(false)
     const { showErrorToast, showSuccessToast } = useContext(SnackbarContext);
-    // const [res ,setRes] = useState(null)
     const { account } = useContext(AppContext)
     const [res, setRes] = useState({})
 
     const onSubmit = async () => {
-       
+        setIsLoading(true)
 
         if (!ctcInfoInput) return showErrorToast('Please enter the contract information');
 
         try {
             parseAddress(ctcInfoInput)
-            setRes(await getContractViews({
+            const result = await getContractViews({
                 account: account,
                 ctcInfo: ctcInfoInput,
                 contractAddress: false,
@@ -35,17 +34,18 @@ export default function AttachRole () {
                 deployedNetworkTime: false,
                 reviewedNetworkTime: false,
                 deliveredNetworkTime: false
-            }))
+            })
+            if (result.buyerAddress === account.getAddress() && result.state === 1) return navigate(`/buyer/track/${encodeURI(ctcInfoInput)}`);
+            else if (result.supplierAddress === account.getAddress() && result.state === 0) return navigate(`/seller/order/${encodeURI(ctcInfoInput)}`); 
         }
         catch (e) { return showErrorToast(e.message) }
         setIsLoading(false)
-
-        if (res.buyerAddress === account.getAddress() && res.state !== 1) return navigate(`/buyer/track/${encodeURI(ctcInfoInput)}`);
-        else if (res.supplierAddress === account.getAddress() && res.state === 0) return navigate(`/seller/order/${encodeURI(ctcInfoInput)}`);
-
+    
         showSuccessToast(`Displaying contract: ${ctcInfoInput}`);
         navigate(`/view/${encodeURI(ctcInfoInput)}`);
     }
+
+    if (!account) return <ConnectAccount />
 
     return <>
         <Title />

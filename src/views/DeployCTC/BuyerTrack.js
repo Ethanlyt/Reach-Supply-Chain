@@ -7,6 +7,7 @@ import AppContext from "../../context/AppContext"
 import ContractDetailsTable from "../components/ContractDetailsTable"
 import StateStepper from "../components/StateStepper"
 import { getContractViews, getContractHandler, buyerDelivered } from "../../Util"
+import Loading from "../components/Loading"
 
 export default function BuyerTrack() {
     const navigate = useNavigate()
@@ -14,9 +15,10 @@ export default function BuyerTrack() {
     const {showErrorToast, showSuccessToast} = useContext(SnackbarContext)
     const {account} = useContext(AppContext)
     const [isLoading, setIsLoading] = useState(true)
-    const [ctc, setCtc] = useState(null)
+    const [isRetrievingCtc, setIsRetrievingCtc] = useState(false)
+    const [isSubmit, setIsSubmit] = useState(false)
 
-    const [cState, setCState] = useState(0)
+    const [ctc, setCtc] = useState({})
     const [res, setRes] = useState({})
 
     const updateContractViews = useCallback(async () => {
@@ -29,10 +31,12 @@ export default function BuyerTrack() {
         }
         showSuccessToast(`Contract retrieve successfully`)
         setIsLoading(false);
+       
     }, [ctc, showErrorToast]);
 
     useEffect(() => {
         if (!ctcInfo) navigate("/")
+        setIsRetrievingCtc(true);
         (async () => {
             try {
                 const res = await getContractHandler(account, ctcInfo);
@@ -42,26 +46,34 @@ export default function BuyerTrack() {
             }
 
         })();
-    }, [ctcInfo, navigate, showErrorToast]);
+        setIsRetrievingCtc(false);
+    }, [ctcInfo, navigate, showErrorToast, setIsRetrievingCtc, setIsSubmit]);
 
     useEffect(() => {
         if (!ctc) return;
         updateContractViews();
-    }, [ctc, updateContractViews]);
+    }, [ctc, updateContractViews, setIsSubmit]);
     
     const onReceived = async() => {
+        setIsSubmit(true)
+        setIsLoading(true)
         await buyerDelivered(ctc)
+        setIsSubmit(false)
+        setIsLoading(false)
     }
+
+    if(isRetrievingCtc) return <Loading message="Retrieving contract" />
 
     return <>
         <Title />
         <StateStepper state={res.state} />
-        {cState === 1 && 
+        {res.state === 1 && 
             <Button variant="contained" color="primary" className='mt-4' onClick={onReceived}>
                 Order Received
             </Button>
         }
-        {cState === 3 &&
+        {isSubmit && <Loading message="Approving delivered" />}
+        {res.state === 3 &&
             <>
                 <Card>
                     <CardContent>
