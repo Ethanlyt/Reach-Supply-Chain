@@ -35,12 +35,13 @@ export default function AttachRole () {
                 reviewedNetworkTime: false,
                 deliveredNetworkTime: false
             })
+            setIsLoading(false)
             if (result.buyerAddress === account.getAddress() && result.state === 1) return navigate(`/buyer/track/${encodeURI(ctcInfoInput)}`);
             else if (result.supplierAddress === account.getAddress() && result.state === 0) return navigate(`/seller/order/${encodeURI(ctcInfoInput)}`); 
         }
         catch (e) { return showErrorToast(e.message) }
+        
         setIsLoading(false)
-    
         showSuccessToast(`Displaying contract: ${ctcInfoInput}`);
         navigate(`/view/${encodeURI(ctcInfoInput)}`);
     }

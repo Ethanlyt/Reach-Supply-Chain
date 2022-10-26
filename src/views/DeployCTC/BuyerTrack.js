@@ -17,6 +17,7 @@ export default function BuyerTrack() {
     const [isLoading, setIsLoading] = useState(true)
     const [isRetrievingCtc, setIsRetrievingCtc] = useState(false)
     const [isSubmit, setIsSubmit] = useState(false)
+    const [url, setUrl] = useState("")
 
     const [ctc, setCtc] = useState({})
     const [res, setRes] = useState({})
@@ -58,6 +59,7 @@ export default function BuyerTrack() {
         setIsSubmit(true)
         setIsLoading(true)
         await buyerDelivered(ctc)
+        setUrl(`http://localhost:3000/#/view/${encodeURI(ctcInfo)}`)
         setIsSubmit(false)
         setIsLoading(false)
     }
@@ -88,8 +90,12 @@ export default function BuyerTrack() {
                     </CardContent>
                 </Card>
                 <h2>Contract Ended</h2>
-                <span>QR???</span>
-                <h2>Please Print This QR At Your Product</h2>
+            <Card sx={{ minWidth: 175, height: 240 }}>
+                <CardContent>
+                    <img src={`https://api.qrserver.com/v1/create-qr-code/?data=${url}&size=150x150`} />
+                </CardContent>
+            </Card>
+            <h2 className="text-success">Please Print This QR At Your Product</h2>
             </>
         }
         
