@@ -1,23 +1,53 @@
-import React, {useState, useContext} from "react"
-import Title from "../components/Title"
-import { Button, Typography, TextField } from "@mui/material"
-import ContractContext from "../../context/ContractContext";
-import { useParams } from "react-router-dom";
+import { Button, TextField, Typography } from "@mui/material";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import AppContext from "../../context/AppContext";
+import { getContractHandler, supplierReject } from "../../Util";
 import ContractDetailsTable from "../components/ContractDetailsTable";
-
+import Title from "../components/Title";
+import SnackbarContext from "../../context/SnackbarContext";
+import Loading from "../components/Loading";
 
 export default function RejectOrder() {
+    const navigate = useNavigate()
+    const {showErrorToast} = useContext(SnackbarContext)
     const [reason, setReason] = useState("");
-    const [isSubmit, setIsSubmit] = useState(true)
+    const [isSubmit, setIsSubmit] = useState(false)
     const {ctcInfo} = useParams()
-    const [isLoading, setIsLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
+    const [isRetrievingCtc, setIsRetrievingCtc] = useState(true)
+    const [ctc, setCtc] = useState({})
+    const [isfinish, setIsFinish] = useState(false)
 
-    const {reject} = useContext(ContractContext);
+    
+    const {
+        account
+    } = useContext(AppContext);
+
+    useEffect(() => {
+        if (!ctcInfo) navigate("/")
+        setIsRetrievingCtc(true);
+        (async () => {
+            try {
+                const res = await getContractHandler(account, ctcInfo);
+                setCtc(res)
+            } catch (e) {
+                showErrorToast(e.message);
+            }
+            
+        })();
+        setIsRetrievingCtc(false);
+    }, [ctcInfo, navigate, showErrorToast, setIsRetrievingCtc]);
+    
 
     const handleSubmit = async() => {
-        await reject(reason)
+        setIsSubmit(true)
+        setIsLoading(true)
+        setIsFinish(true)
+        await supplierReject(ctc, reason)
         setIsSubmit(false)
         setIsLoading(false)
+        
     }
 
     return <>
@@ -25,8 +55,7 @@ export default function RejectOrder() {
     
         <h3><i>You are <strong>Seller</strong></i></h3>
 
-
-        {isSubmit ? <>
+        {isSubmit == false && isfinish == false && <>
         <Typography variant="subtitle1" gutterBottom className='lead text-muted mb-4'>
             Please state your reason (optional)
         </Typography>
@@ -40,7 +69,10 @@ export default function RejectOrder() {
             value={reason}
             onChange={(e) => setReason(e.target.value)}
         />
+        </>
+        }
 
+        {isRetrievingCtc == false && isSubmit == false && isfinish == false && 
         <Button
             onClick={handleSubmit}
             variant="contained"
@@ -48,15 +80,17 @@ export default function RejectOrder() {
         >
             Submit
         </Button>
-        </>
-        :
+        }
+
+        {isSubmit == true && isRetrievingCtc == false && isfinish == true && 
         <>
+            <Loading message="Rejecting contract" />
             <ContractDetailsTable
                 isLoading={isLoading}
-                contractAddress={decodeURI(ctcInfo) }
+                contractAddress={decodeURI(ctcInfo)}
             />
-            <h1><br /><br /> Contract Ended</h1>
         </>
+        
         }
 
     </>

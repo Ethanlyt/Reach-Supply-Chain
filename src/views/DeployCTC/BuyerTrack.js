@@ -6,7 +6,7 @@ import SnackbarContext from "../../context/SnackbarContext"
 import AppContext from "../../context/AppContext"
 import ContractDetailsTable from "../components/ContractDetailsTable"
 import StateStepper from "../components/StateStepper"
-import { getContractViews, getContractHandler } from "../../Util"
+import { getContractViews, getContractHandler, buyerDelivered } from "../../Util"
 
 export default function BuyerTrack() {
     const navigate = useNavigate()
@@ -17,7 +17,7 @@ export default function BuyerTrack() {
     const [ctc, setCtc] = useState(null)
 
     const [cState, setCState] = useState(0)
-    const [res, setRes] = useState(null)
+    const [res, setRes] = useState({})
 
     const updateContractViews = useCallback(async () => {
         setIsLoading(true);
@@ -33,12 +33,15 @@ export default function BuyerTrack() {
 
     useEffect(() => {
         if (!ctcInfo) navigate("/")
+        (async () => {
+            try {
+                const res = await getContractHandler(account, ctcInfo);
+                setCtc(res)
+            } catch (e) {
+                showErrorToast(e.message);
+            }
 
-        try {
-            setCtc(getContractHandler(account, decodeURI(ctcInfo)));
-        } catch (e) {
-            showErrorToast(e.message);
-        }
+        })();
     }, [ctcInfo, navigate, showErrorToast]);
 
     useEffect(() => {
@@ -46,8 +49,8 @@ export default function BuyerTrack() {
         updateContractViews();
     }, [ctc, updateContractViews]);
     
-    const onReceived = () => {
-        setCState(prevState => prevState + 1)
+    const onReceived = async() => {
+        await buyerDelivered(ctc)
     }
 
     return <>

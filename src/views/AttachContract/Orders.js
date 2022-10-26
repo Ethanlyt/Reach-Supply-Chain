@@ -36,10 +36,15 @@ export default function Order () {
 
 
     useEffect(() => {
-        // if (!ctcInfo) navigate("/");
+        //
+        async function getContract() {
+            await getContractHandler(account, decodeURI(ctcInfo))
+        }
+        //
+        if (!ctcInfo) navigate("/")
 
         try {
-            setCtc(getContractHandler(account, decodeURI(ctcInfo)));
+            setCtc(getContract());
         } catch (e) {
             showErrorToast(e.message);
         }
@@ -89,6 +94,7 @@ export default function Order () {
             </Card>
             <br />
 
+            {res.state === 0 &&
             <div className="d-flex justify-content-between">
                 <Button variant="outlined" onClick={handleAccept}>
                     Accept Order
@@ -98,6 +104,7 @@ export default function Order () {
                     Reject Order
                 </Button>
             </div>
+            }
         </div>}
     </>
 }

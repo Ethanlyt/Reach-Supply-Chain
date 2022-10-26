@@ -23,7 +23,7 @@ export default function ContractDetail () {
 
     const [url, setUrl] = useState("")
     const [ctc, setCtc] = useState(null)
-    const [res, setRes] = useState(null)
+    const [res, setRes] = useState({})
 
 
     const updateContractViews = useCallback(async () => {

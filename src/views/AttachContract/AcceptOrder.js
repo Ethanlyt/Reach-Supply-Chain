@@ -8,18 +8,18 @@ import ContractDetailsTable from "../components/ContractDetailsTable"
 import SnackbarContext from "../../context/SnackbarContext"
 import AppContext from "../../context/AppContext"
 import Loading from "../components/Loading"
-import { getContractHandler, getContractViews } from "../../Util"
+import { getContractHandler, getContractViews , supplierAddIngredient, supplierAccept} from "../../Util"
+import ConnectAccount from "../ConnectAccount"
 
 export default function AcceptOrder () {
     const navigate = useNavigate()
-    const {accept} = useContext(ContractContext);
     const {ctcInfo} = useParams()
     const {account} = useContext(AppContext)
     const { showErrorToast, showSuccessToast } = useContext(SnackbarContext);
     const [ctc, setCtc] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [res, setRes] = useState(null)
+    const [res, setRes] = useState({})
 
     const [ingredientToAdd, setIngredientToAdd] = useState("");
 
@@ -36,13 +36,18 @@ export default function AcceptOrder () {
     }, [ctc, showErrorToast]);
 
     useEffect(() => {
-        if (!ctcInfo) navigate("/");
+        if (!ctcInfo) navigate("/")
+    
+        (async () => {
+            try {
+                const res = await getContractHandler(account, ctcInfo);
+                setCtc(res)
+            } catch (e) {
+                showErrorToast(e.message);
+            }
 
-        try {
-            setCtc(getContractHandler(account, decodeURI(ctcInfo)));
-        } catch (e) {
-            showErrorToast(e.message);
-        }
+        })();
+        
     }, [ctcInfo, navigate, showErrorToast]);
 
     useEffect(() => {
@@ -51,8 +56,9 @@ export default function AcceptOrder () {
     }, [ctc, updateContractViews]);
 
 
-    const handleSubmit = () => {
-        accept("ingredient")
+    const handleSubmit = async () => {
+        await supplierAccept(ctc)
+        showSuccessToast("Contract has been approved");
         navigate(`/seller/track/${ctcInfo}`)
     } 
 
@@ -60,7 +66,7 @@ export default function AcceptOrder () {
         setIsSubmitting(true);
 
         try {
-            await ctc.a.Seller.addIngredient(ingredientToAdd);
+            await supplierAddIngredient(ctc, ingredientToAdd);
             showSuccessToast("Ingredient added successfully");
             setIngredientToAdd("");
             updateContractViews();
@@ -70,6 +76,8 @@ export default function AcceptOrder () {
 
         setIsSubmitting(false);
     }
+
+    if (!account) return <ConnectAccount />
 
     return <>
         <Card sx={{ minWidth: 675 }}>
@@ -93,17 +101,18 @@ export default function AcceptOrder () {
         </Card>
         <br />
         {isSubmitting ? <Loading message='Submitting ingredient...' /> :
-        <Card sx={{ minWidth: 675 }}>
+            <Card sx={{ minWidth: 675 }} >
             <CardContent>
                 <TextField
+                        sx={{ minWidth: 575 }}
                     className='mb-1 mt-3'
                     label="Ingredient to add"
                     variant="filled"
                     value={ingredientToAdd}
                     onChange={(e) => setIngredientToAdd(e.target.value)}
                 />
-
-                <Button variant="contained" color="primary" className='mt-4' onClick={submitAddIngredient}>
+                <br />
+                    <Button variant="contained" color="primary" className='mt-4' onClick={submitAddIngredient}>
                     Add ingredient
                 </Button>
             </CardContent>
