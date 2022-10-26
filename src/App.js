@@ -10,10 +10,11 @@ import RoutedContextGroup from "./context/RoutedContextGroup";
 
 function App() {
     return <>
-        <NavBar />
+        
 
         <HashRouter>
             <RoutedContextGroup>
+                <NavBar />
                 <Container className="d-flex flex-column align-items-center py-5">
                     <AppRoutes />
                 </Container>
