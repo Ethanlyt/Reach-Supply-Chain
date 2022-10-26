@@ -23,6 +23,20 @@ export default function BuyerTrack() {
     const [isLoading, setIsLoading] = useState(true);
     const [isRetrievingCtc, setIsRetrievingCtc] = useState(false);
     const [isSubmit, setIsSubmit] = useState(false);
+    const [buttonDissapear, setButtonDissapear] = useState(false)
+    const [url, setUrl] = useState("");
+    const [ctc, setCtc] = useState({});
+    const [res, setRes] = useState({});
+
+    const navigate = useNavigate();
+
+    const {ctcInfo} = useParams();
+    const {showErrorToast, showSuccessToast} = useContext(SnackbarContext);
+    const {account} = useContext(AppContext);
+
+    const [isLoading, setIsLoading] = useState(true);
+    const [isRetrievingCtc, setIsRetrievingCtc] = useState(false);
+    const [isSubmit, setIsSubmit] = useState(false);
     const [url, setUrl] = useState("");
     const [ctc, setCtc] = useState({});
     const [res, setRes] = useState({});
@@ -57,7 +71,8 @@ export default function BuyerTrack() {
             }
             setIsRetrievingCtc(false);
         })();
-
+        setUrl(`http://localhost:3000/#/view/${encodeURI(ctcInfo)}`)
+        setIsRetrievingCtc(false);
     }, [ctcInfo, navigate, showErrorToast, setIsRetrievingCtc, setIsSubmit]);
 
 
@@ -82,11 +97,12 @@ export default function BuyerTrack() {
 
     return <>
         <Title />
+        <h3><i>You are <strong>Buyer</strong></i></h3>
 
         <StateStepper state={res.state} />
 
         {
-            res.state === 1 && 
+            res.state === 1 && buttonDissapear === true &&
             <Button variant="contained" color="primary" className='mt-4' onClick={onReceived}>
                 Order Received
             </Button>
@@ -115,7 +131,7 @@ export default function BuyerTrack() {
                 
                 <Typography variant="h2">Contract Closed.</Typography>
                 
-                <Card sx={{ minWidth: 175, height: 240 }}>
+                <Card sx={{ minWidth: 175, height: 280 }}>
                     <CardContent>
                         <img src={`https://api.qrserver.com/v1/create-qr-code/?data=${url}&size=150x150`} />
                     </CardContent>
