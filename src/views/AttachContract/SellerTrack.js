@@ -4,7 +4,6 @@ import { Button, Card, CardContent, Typography, TextField } from "@mui/material"
 import ContractDetailsTable from "../components/ContractDetailsTable"
 import { useNavigate, useParams } from "react-router-dom"
 import StateStepper from "../components/StateStepper"
-import * as backend from '../../reach-backend/index.main.mjs'
 import AppContext from "../../context/AppContext"
 import SnackbarContext from "../../context/SnackbarContext"
 import { getContractViews, getContractHandler } from "../../Util"
@@ -17,14 +16,14 @@ export default function SellerTrack () {
     const navigate = useNavigate()
 
     const [isLoading, setIsLoading] = useState(true)
-    const [ctc, setCtc] = useState(null)
-    const [res, setRes] = useState(null)
+    const [ctc, setCtc] = useState({})
+    const [res, setRes] = useState({})
 
     const updateContractViews = useCallback(async () => {
         setIsLoading(true);
 
         try {
-            setRes(await getContractViews({ ctc: ctc }))
+            setRes(await getContractViews({ account: account, ctcInfo: ctcInfo }))
         } catch (e) {
             showErrorToast(e.message);
         }
@@ -34,13 +33,16 @@ export default function SellerTrack () {
 
     useEffect(() => {
         if (!ctcInfo) navigate("/")
+ 
+        (async () => {
+            try {
+                const res = await getContractHandler(account, ctcInfo);
+                setCtc(res)
+            } catch (e) {
+                showErrorToast(e.message);
+            }
 
-        try {
-            const ctc = getContractHandler(account, decodeURI(ctcInfo));
-            setCtc(ctc);
-        } catch (e) {
-            showErrorToast(e.message);
-        }
+        })();
     }, [ctcInfo, navigate, showErrorToast]);
 
     useEffect(() => {
