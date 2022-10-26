@@ -1,30 +1,36 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Typography, Button, TextField } from "@mui/material";
-import ConnectAccount from "../components/ConnectAccount";
+
 import SnackbarContext from "../../context/SnackbarContext";
-import Title from "../components/Title";
 import AppContext from "../../context/AppContext";
+
+import Title from "../components/Title";
 import Loading from "../components/Loading";
+import ConnectAccount from "../components/ConnectAccount";
 
 import { parseAddress, getContractViews } from "../../Util";
 
-export default function AttachRole () {
+
+
+export default function AttachRole() {
     const navigate = useNavigate();
 
-    const [ctcInfoInput, setCtcInfoInput] = useState('');
-    const [isLoading, setIsLoading] = useState(false)
     const { showErrorToast, showSuccessToast } = useContext(SnackbarContext);
-    const { account } = useContext(AppContext)
-    const [res, setRes] = useState({})
+    const { account } = useContext(AppContext);
+
+    const [ctcInfoInput, setCtcInfoInput] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    
+
 
     const onSubmit = async () => {
-        setIsLoading(true)
-
-        if (!ctcInfoInput) return showErrorToast('Please enter the contract information');
+        setIsLoading(true);
 
         try {
-            parseAddress(ctcInfoInput)
+            if (!ctcInfoInput) throw new Error('Please enter the contract information');
+            parseAddress(ctcInfoInput);
+
             const result = await getContractViews({
                 account: account,
                 ctcInfo: ctcInfoInput,
@@ -34,16 +40,24 @@ export default function AttachRole () {
                 deployedNetworkTime: false,
                 reviewedNetworkTime: false,
                 deliveredNetworkTime: false
-            })
-            setIsLoading(false)
-            if (result.buyerAddress === account.getAddress() && result.state === 1) return navigate(`/buyer/track/${encodeURI(ctcInfoInput)}`);
-            else if (result.supplierAddress === account.getAddress() && result.state === 0) return navigate(`/seller/order/${encodeURI(ctcInfoInput)}`); 
+            });
+
+            setIsLoading(false);
+            
+            if (result.buyerAddress === account.getAddress() && result.state === 1) 
+                return navigate(`/buyer/track/${encodeURI(ctcInfoInput)}`);
+            else if (result.supplierAddress === account.getAddress() && result.state === 0)
+                return navigate(`/seller/order/${encodeURI(ctcInfoInput)}`);
+            
+            showSuccessToast(`Displaying contract: ${ctcInfoInput}`);
+            navigate(`/view/${encodeURI(ctcInfoInput)}`);
         }
-        catch (e) { return showErrorToast(e.message) }
+        catch (e) {
+            return showErrorToast(e.message) 
+        } finally {
+            setIsLoading(false);
+        }
         
-        setIsLoading(false)
-        showSuccessToast(`Displaying contract: ${ctcInfoInput}`);
-        navigate(`/view/${encodeURI(ctcInfoInput)}`);
     }
 
     if (!account) return <ConnectAccount />
@@ -52,7 +66,7 @@ export default function AttachRole () {
         <Title />
 
         <Typography variant="subtitle1" gutterBottom className='lead text-muted mb-4'>
-            Please provide the contract information (contract address) to attach you role as BUYER or SUPPLIER:
+            Please provide the contract information to attach you role as BUYER or SUPPLIER:
         </Typography>
 
         <TextField
@@ -65,8 +79,10 @@ export default function AttachRole () {
             onChange={(e) => setCtcInfoInput(e.target.value)}
         />
 
-        {isLoading ? <Loading message="Retrieving contract data" /> :
-
+        {
+            isLoading ? 
+            <Loading message="Retrieving contract data" />
+            :
             <Button onClick={onSubmit} variant="contained" className='my-2'>
                 View
             </Button>

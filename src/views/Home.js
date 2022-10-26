@@ -26,7 +26,7 @@ export default function Home() {
             <Button
                 variant="outlined"
                 size="large"
-                onClick={() => navigate('/contract/role') }
+                onClick={ () => navigate('/contract/role') }
             >
                 Attach Contract
             </Button>

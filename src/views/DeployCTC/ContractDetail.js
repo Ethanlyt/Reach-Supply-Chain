@@ -1,8 +1,7 @@
-import React,{useContext, useState, useEffect, useCallback} from 'react'
+import React, {useContext, useState, useEffect, useCallback} from 'react';
 import { Typography, Card, CardContent, Button } from "@mui/material";
-import Title from '../components/Title'
+import Title from '../components/Title';
 import { useNavigate, useParams } from 'react-router-dom';
-import Loading from '../components/Loading';
 
 import AccountDetails from '../components/AccountDetails';
 import AppContext from '../../context/AppContext';
@@ -13,9 +12,10 @@ import { saveAs } from 'file-saver';
 import { getContractHandler, getContractViews } from "../../Util"
 
 
+
 export default function ContractDetail () {
-    const { account } = useContext(AppContext)
-    const { showSuccessToast, showErrorToast } = useContext(SnackbarContext)
+    const { account } = useContext(AppContext);
+    const { showSuccessToast, showErrorToast } = useContext(SnackbarContext);
 
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false)
@@ -36,7 +36,7 @@ export default function ContractDetail () {
         }
         showSuccessToast(`Contract retrieve successfully`)
         setIsLoading(false);
-    }, [ctc, showErrorToast]);
+    }, [account, ctcInfo, showSuccessToast, showErrorToast]);
 
 
     useEffect(() => {
@@ -52,7 +52,7 @@ export default function ContractDetail () {
             showErrorToast(e.message);
         }
         setUrl(`http://localhost:3000/Morra-Smart-Contract#/seller/order/${ctcInfo}`)
-    }, [ctcInfo, navigate, showErrorToast]);
+    }, [account, ctcInfo, navigate, showErrorToast]);
 
     useEffect(() => {
         if (!ctc) return;
@@ -113,7 +113,7 @@ export default function ContractDetail () {
             <div className='flex-column d-flex justify-content-center'>
                 <Card sx={{ minWidth: 175, height: 280 }}>
                     <CardContent>
-                        <img src={`https://api.qrserver.com/v1/create-qr-code/?data=${url}&size=150x150`} />
+                        <img src={`https://api.qrserver.com/v1/create-qr-code/?data=${url}&size=150x150`} alt='QR for seller to attach' />
                     </CardContent>
                 </Card>
                 <br />

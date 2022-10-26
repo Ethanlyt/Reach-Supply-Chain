@@ -1,6 +1,6 @@
 import React, { useState, useContext, useCallback, useEffect } from "react"
 import Title from "../components/Title"
-import { Button, Card, CardContent, Typography, TextField } from "@mui/material"
+import { Card, CardContent, } from "@mui/material"
 import ContractDetailsTable from "../components/ContractDetailsTable"
 import { useNavigate, useParams } from "react-router-dom"
 import StateStepper from "../components/StateStepper"
@@ -29,7 +29,7 @@ export default function SellerTrack () {
         }
         showSuccessToast(`Contract retrieve successfully`)
         setIsLoading(false);
-    }, [ctc, showErrorToast]);
+    }, [account, ctcInfo, showSuccessToast, showErrorToast]);
 
     useEffect(() => {
         if (!ctcInfo) navigate("/")
@@ -43,7 +43,7 @@ export default function SellerTrack () {
             }
 
         })();
-    }, [ctcInfo, navigate, showErrorToast]);
+    }, [account, ctcInfo, navigate, showErrorToast]);
 
     useEffect(() => {
         if (!ctc) return;
@@ -67,7 +67,8 @@ export default function SellerTrack () {
         <br />
         <StateStepper state={res.state} />
 
-        {res.state === 4 && 
+        {
+            res.state === 4 && 
             <h2>Contract Ended</h2>    
         }
         

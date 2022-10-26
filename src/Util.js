@@ -110,6 +110,7 @@ export async function getContractViews({
     deliveredNetworkTime = true,
 }) {
     if (!ctc) ctc = await getContractHandler(account, ctcInfo);
+    
     const res = {};
     if (name) res.name = removeNullChar( await ctc.unsafeViews.Explorer.name() );
     if (buyerAddress) res.buyerAddress = parseAddress( await ctc.unsafeViews.Explorer.buyerAddress() );

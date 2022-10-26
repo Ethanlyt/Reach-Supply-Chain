@@ -8,19 +8,17 @@ const AppContext = createContext(null);
 function AppContextProvider({ children }) {
     const [ account, setAccount ] = useState(null);
 
-    const [ error, setError ] = useState({});
-
 
     // Put exposed states here
     const state = {
-        account, setAccount,
-        error, setError,
+        account, 
+        setAccount,
     };
 
 
 
     return (
-        <AppContext.Provider value={ state }>
+        <AppContext.Provider value={ state } >
             {children}
         </AppContext.Provider>
     );
