@@ -27,9 +27,8 @@ export default function AttachRole() {
     const onSubmit = async () => {
         setIsLoading(true);
 
-        if (!ctcInfoInput) return showErrorToast('Please enter the contract information');
-
         try {
+            if (!ctcInfoInput) throw new Error('Please enter the contract information');
             parseAddress(ctcInfoInput);
 
             const result = await getContractViews({
@@ -48,13 +47,17 @@ export default function AttachRole() {
             if (result.buyerAddress === account.getAddress() && result.state === 1) 
                 return navigate(`/buyer/track/${encodeURI(ctcInfoInput)}`);
             else if (result.supplierAddress === account.getAddress() && result.state === 0)
-                return navigate(`/seller/order/${encodeURI(ctcInfoInput)}`); 
+                return navigate(`/seller/order/${encodeURI(ctcInfoInput)}`);
+            
+            showSuccessToast(`Displaying contract: ${ctcInfoInput}`);
+            navigate(`/view/${encodeURI(ctcInfoInput)}`);
         }
-        catch (e) { return showErrorToast(e.message) }
+        catch (e) {
+            return showErrorToast(e.message) 
+        } finally {
+            setIsLoading(false);
+        }
         
-        setIsLoading(false)
-        showSuccessToast(`Displaying contract: ${ctcInfoInput}`);
-        navigate(`/view/${encodeURI(ctcInfoInput)}`);
     }
 
     if (!account) return <ConnectAccount />

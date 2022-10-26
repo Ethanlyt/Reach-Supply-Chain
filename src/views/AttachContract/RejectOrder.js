@@ -1,12 +1,14 @@
-import { Button, TextField, Typography } from "@mui/material";
+import { Button, TextField, Typography, Card, CardContent } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AppContext from "../../context/AppContext";
 import { getContractHandler, supplierReject } from "../../Util";
+
 import ContractDetailsTable from "../components/ContractDetailsTable";
 import Title from "../components/Title";
 import SnackbarContext from "../../context/SnackbarContext";
 import Loading from "../components/Loading";
+
 
 export default function RejectOrder() {
     const navigate = useNavigate()
@@ -37,7 +39,7 @@ export default function RejectOrder() {
             
         })();
         setIsRetrievingCtc(false);
-    }, [ctcInfo, navigate, showErrorToast, setIsRetrievingCtc]);
+    }, [account, ctcInfo, navigate, showErrorToast, setIsRetrievingCtc]);
     
 
     const handleSubmit = async() => {
@@ -59,51 +61,66 @@ export default function RejectOrder() {
     
         <h3><i>You are <strong>Seller</strong></i></h3>
 
-        {isSubmit == false && isfinish == false && <>
-        <Typography variant="subtitle1" gutterBottom className='lead text-muted mb-4'>
-            Please state your reason (optional)
-        </Typography>
+        {  
+            !isSubmit && !isfinish && 
+            <>
+                <Typography variant="subtitle1" gutterBottom className='lead text-muted mb-4'>
+                    Please state your reason (optional)
+                </Typography>
 
-        <TextField
-            label="Enter Text Here..."
-            multiline
-            rows={4}
-            variant="filled"
-            sx={{ minWidth: '400px', maxWidth: '700px' }}
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
-        />
-        </>
-        }
-        {isSubmit && isLoading && isfinish && <Loading message="Rejecting contract" />}
-
-        {isRetrievingCtc == false && isSubmit == false && isfinish == false && 
-        <Button
-            onClick={handleSubmit}
-            variant="contained"
-            className='my-2'
-        >
-            Submit
-        </Button>
+                <TextField
+                    label="Enter Text Here..."
+                    multiline
+                    rows={4}
+                    variant="filled"
+                    sx={{ minWidth: '400px', maxWidth: '700px' }}
+                    value={reason}
+                    onChange={(e) => setReason(e.target.value)}
+                />
+            </>
         }
 
-        {isSubmit == false && isRetrievingCtc == false && isfinish == true && 
-        <>
-            <ContractDetailsTable
-                isLoading={isLoading}
-                contractAddress={decodeURI(ctcInfo)}
-            />
-            <br />
-            <h3 className="text-danger" >Contract Rejected Successfully</h3>
+
+        {
+            isSubmit && isLoading && isfinish && 
+            <Loading message="Rejecting contract" />
+        }
+
+        {
+            !isRetrievingCtc && !isSubmit && !isfinish && 
             <Button
-                onClick={toHome}
+                onClick={handleSubmit}
                 variant="contained"
                 className='my-2'
             >
-                Back to home
+                Submit
             </Button>
-        </>
-        
+        }
+
+        {
+            !isSubmit && !isRetrievingCtc && isfinish && 
+            <>
+
+                <Card>
+                <CardContent>
+                    <ContractDetailsTable
+                        isLoading={isLoading}
+                        contractAddress={decodeURI(ctcInfo)}
+                    />
+                </CardContent>
+                </Card>
+                <br />
+                <h3 className="text-danger" >Contract Rejected Successfully</h3>
+
+
+                <Button
+                    onClick={toHome}
+                    variant="contained"
+                    className='my-2'
+                >
+                    Back to home
+                </Button>
+            </>
         }
 
     </>

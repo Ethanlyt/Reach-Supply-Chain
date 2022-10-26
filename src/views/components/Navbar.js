@@ -9,7 +9,7 @@ import { loadStdlib } from "@reach-sh/stdlib";
 import { parseAddress } from '../../Util';
 import { Button } from '@mui/material';
 import { stdlib } from '../../Util';
-import { border, Box } from '@mui/system';
+import { Box } from '@mui/system';
 const reach = loadStdlib(process.env);
 
 
@@ -61,9 +61,12 @@ export default function NavBar() {
                 {account ? 
                 <Typography  component="div" sx={{ flexGrow: 0 }}>
                         {stdlib.standardUnit === "ALGO" ? 
-                        <img src="https://img.icons8.com/external-black-fill-lafs/32/000000/external-Algorand-cryptocurrency-black-fill-lafs.png"/> 
+                        <img 
+                            src="https://img.icons8.com/external-black-fill-lafs/32/000000/external-Algorand-cryptocurrency-black-fill-lafs.png"
+                            alt='ALgorand logo'
+                        /> 
                         : 
-                        <img src="https://img.icons8.com/stickers/32/000000/metamask-logo.png" />} {displayAddress()} 
+                        <img src="https://img.icons8.com/stickers/32/000000/metamask-logo.png" alt='Metamask logo' />} {displayAddress()} 
                 </Typography>
                 :
                 <Button

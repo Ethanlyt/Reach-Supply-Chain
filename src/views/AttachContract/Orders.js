@@ -31,7 +31,7 @@ export default function Order() {
         }
         showSuccessToast(`Contract retrieve successfully`)
         setIsLoading(false);
-    }, [ctc, showErrorToast]);
+    }, [showErrorToast, account, ctcInfo, showSuccessToast]);
 
 
     useEffect(() => {
@@ -46,7 +46,7 @@ export default function Order() {
             }
             
         })();
-    }, [ctcInfo, navigate, showErrorToast]);
+    }, [account, ctcInfo, navigate, showErrorToast]);
 
     useEffect(() => {
         if (!ctc) return;
