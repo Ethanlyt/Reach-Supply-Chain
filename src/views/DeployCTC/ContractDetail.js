@@ -1,8 +1,7 @@
-import React,{useContext, useState, useEffect, useCallback} from 'react'
+import React, {useContext, useState, useEffect, useCallback} from 'react';
 import { Typography, Card, CardContent, Button } from "@mui/material";
-import Title from '../components/Title'
+import Title from '../components/Title';
 import { useNavigate, useParams } from 'react-router-dom';
-import Loading from '../components/Loading';
 
 import AccountDetails from '../components/AccountDetails';
 import AppContext from '../../context/AppContext';
@@ -13,9 +12,10 @@ import { saveAs } from 'file-saver';
 import { getContractHandler, getContractViews } from "../../Util"
 
 
+
 export default function ContractDetail () {
-    const { account } = useContext(AppContext)
-    const { showSuccessToast, showErrorToast } = useContext(SnackbarContext)
+    const { account } = useContext(AppContext);
+    const { showSuccessToast, showErrorToast } = useContext(SnackbarContext);
 
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false)

@@ -1,28 +1,33 @@
-import React, { useState, useContext,useCallback, useEffect} from "react"
-import Title from "../components/Title"
-import { Button, Typography, TextField, Card, CardContent } from "@mui/material"
-import { useNavigate, useParams } from "react-router-dom"
-import ContractDetailsTable from "../components/ContractDetailsTable"
-import SnackbarContext from "../../context/SnackbarContext"
-import AppContext from "../../context/AppContext"
-import Loading from "../components/Loading"
-import { getContractHandler, getContractViews , supplierAddIngredient, supplierAccept} from "../../Util"
-import ConnectAccount from "../ConnectAccount"
-import AccountDetails from "../components/AccountDetails"
+import React, { useState, useContext,useCallback, useEffect} from "react";
+import { Button, Typography, TextField, Card, CardContent } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
+
+import Title from "../components/Title";
+import ContractDetailsTable from "../components/ContractDetailsTable";
+import Loading from "../components/Loading";
+import ConnectAccount from "../components/ConnectAccount";
+import AccountDetails from "../components/AccountDetails";
+
+import SnackbarContext from "../../context/SnackbarContext";
+import AppContext from "../../context/AppContext";
+
+import { getContractHandler, getContractViews , supplierAddIngredient, supplierAccept} from "../../Util";
+
 
 export default function AcceptOrder () {
-    const navigate = useNavigate()
-    const {ctcInfo} = useParams()
-    const {account} = useContext(AppContext)
+    const navigate = useNavigate();
+
+    const {ctcInfo} = useParams();
+    const {account} = useContext(AppContext);
     const { showErrorToast, showSuccessToast } = useContext(SnackbarContext);
    
-    const [isLoading, setIsLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isRetrievingCtc, setIsRetrievingCtc] = useState(true)
-    const [isSubmit, setIsSubmit] = useState(false)
+    const [isRetrievingCtc, setIsRetrievingCtc] = useState(true);
+    const [isSubmit, setIsSubmit] = useState(false);
 
-    const [ctc, setCtc] = useState({})
-    const [res, setRes] = useState({})
+    const [ctc, setCtc] = useState({});
+    const [res, setRes] = useState({});
 
     const [ingredientToAdd, setIngredientToAdd] = useState("");
 

@@ -1,17 +1,17 @@
-import React, { useContext, useState, useEffect, useCallback } from "react"
-import Loading from "../components/Loading"
-import { Button, Card, Typography, CardContent } from "@mui/material"
-import Title from '../components/Title'
-import AccountDetails from "../components/AccountDetails"
-import ContractContext from "../../context/ContractContext"
-import AppContext from "../../context/AppContext"
-import SnackbarContext from "../../context/SnackbarContext"
-import { useNavigate, useParams } from "react-router-dom"
-import { getContractHandler, getContractViews } from "../../Util"
-import ContractDetailsTable from "../components/ContractDetailsTable"
-import ConnectAccount from "../ConnectAccount"
+import React, { useContext, useState, useEffect, useCallback } from "react";
+import Loading from "../components/Loading";
+import { Button, Card, CardContent } from "@mui/material";
+import Title from '../components/Title';
+import AccountDetails from "../components/AccountDetails";
+import AppContext from "../../context/AppContext";
+import SnackbarContext from "../../context/SnackbarContext";
+import { useNavigate, useParams } from "react-router-dom";
+import { getContractHandler, getContractViews } from "../../Util";
+import ContractDetailsTable from "../components/ContractDetailsTable";
+import ConnectAccount from "../components/ConnectAccount";
 
-export default function Order () {
+
+export default function Order() {
     const navigate = useNavigate();
     const { ctcInfo } = useParams()
     const { account } = useContext(AppContext)
