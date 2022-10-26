@@ -23,14 +23,14 @@ export default function ContractDetail () {
 
     const [url, setUrl] = useState("")
     const [ctc, setCtc] = useState(null)
-    const [res, setRes] = useState(null)
+    const [res, setRes] = useState({})
 
 
     const updateContractViews = useCallback(async () => {
         setIsLoading(true);
 
         try {
-            setRes(await getContractViews({ ctc: ctc }));
+            setRes(await getContractViews({ account: account, ctcInfo: ctcInfo }))
         } catch (e) {
             showErrorToast(e.message);
         }
@@ -47,8 +47,7 @@ export default function ContractDetail () {
         if(!ctcInfo) navigate("/")
 
         try {
-            const ctc = getContractHandler(account, decodeURI(ctcInfo));
-            setCtc(ctc);
+            setCtc(getContractHandler(account, decodeURI(ctcInfo)));
         } catch (e) {
             showErrorToast(e.message);
         }

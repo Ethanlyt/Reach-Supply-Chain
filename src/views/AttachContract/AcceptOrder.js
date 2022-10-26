@@ -2,24 +2,27 @@ import React, { useState, useContext,useCallback, useEffect} from "react"
 import Title from "../components/Title"
 import { Button, Typography, TextField, Card, CardContent } from "@mui/material"
 import { useNavigate, useParams } from "react-router-dom"
-import ContractContext from "../../context/ContractContext"
-import * as backend from '../../reach-backend/index.main.mjs'
 import ContractDetailsTable from "../components/ContractDetailsTable"
 import SnackbarContext from "../../context/SnackbarContext"
 import AppContext from "../../context/AppContext"
 import Loading from "../components/Loading"
-import { getContractHandler, getContractViews } from "../../Util"
+import { getContractHandler, getContractViews , supplierAddIngredient, supplierAccept} from "../../Util"
+import ConnectAccount from "../ConnectAccount"
+import AccountDetails from "../components/AccountDetails"
 
 export default function AcceptOrder () {
     const navigate = useNavigate()
-    const {accept} = useContext(ContractContext);
     const {ctcInfo} = useParams()
     const {account} = useContext(AppContext)
     const { showErrorToast, showSuccessToast } = useContext(SnackbarContext);
-    const [ctc, setCtc] = useState(null)
+   
     const [isLoading, setIsLoading] = useState(true)
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [res, setRes] = useState(null)
+    const [isRetrievingCtc, setIsRetrievingCtc] = useState(true)
+    const [isSubmit, setIsSubmit] = useState(false)
+
+    const [ctc, setCtc] = useState({})
+    const [res, setRes] = useState({})
 
     const [ingredientToAdd, setIngredientToAdd] = useState("");
 
@@ -27,7 +30,7 @@ export default function AcceptOrder () {
         setIsLoading(true);
 
         try {
-            setRes(await getContractViews({ ctc: ctc }))
+            setRes(await getContractViews({ account: account, ctcInfo: ctcInfo }))
         } catch (e) {
             showErrorToast(e.message);
         }
@@ -36,15 +39,19 @@ export default function AcceptOrder () {
     }, [ctc, showErrorToast]);
 
     useEffect(() => {
-        if (!ctcInfo) navigate("/");
+        if (!ctcInfo) navigate("/")
+        setIsRetrievingCtc(true);
+        (async () => {
+            try {
+                const res = await getContractHandler(account, ctcInfo);
+                setCtc(res)
+            } catch (e) {
+                showErrorToast(e.message);
+            }
 
-        try {
-            const ctc = getContractHandler(account, decodeURI(ctcInfo));
-            setCtc(ctc);
-        } catch (e) {
-            showErrorToast(e.message);
-        }
-    }, [ctcInfo, navigate, showErrorToast]);
+        })();
+        setIsRetrievingCtc(false);
+    }, [ctcInfo, navigate, showErrorToast, setIsRetrievingCtc]);
 
     useEffect(() => {
         if (!ctc) return;
@@ -52,8 +59,13 @@ export default function AcceptOrder () {
     }, [ctc, updateContractViews]);
 
 
-    const handleSubmit = () => {
-        accept("ingredient")
+    const handleSubmit = async () => {
+        setIsSubmit(true)
+        setIsLoading(true)
+        await supplierAccept(ctc)
+        setIsSubmit(false)
+        setIsLoading(false)
+        showSuccessToast("Contract has been approved");
         navigate(`/seller/track/${ctcInfo}`)
     } 
 
@@ -61,7 +73,7 @@ export default function AcceptOrder () {
         setIsSubmitting(true);
 
         try {
-            await ctc.a.Seller.addIngredient(ingredientToAdd);
+            await supplierAddIngredient(ctc, ingredientToAdd);
             showSuccessToast("Ingredient added successfully");
             setIngredientToAdd("");
             updateContractViews();
@@ -72,7 +84,14 @@ export default function AcceptOrder () {
         setIsSubmitting(false);
     }
 
+    if (!account) return <ConnectAccount />
+    if (isRetrievingCtc) return <Loading message="Retrieving contract" />
+
     return <>
+        <Title />
+        <AccountDetails />
+        <h3><i>You are <strong>Seller</strong></i></h3>
+        {console.log(ctc)}
         <Card sx={{ minWidth: 675 }}>
             <CardContent>
                 <ContractDetailsTable
@@ -93,27 +112,33 @@ export default function AcceptOrder () {
 
         </Card>
         <br />
-        {isSubmitting ? <Loading message='Submitting ingredient...' /> :
-        <Card sx={{ minWidth: 675 }}>
+        {isSubmit && isLoading && <Loading message="Approving contract" />}
+
+        {isSubmitting ? <Loading message='Submitting ingredient...' /> : !isLoading && <>
+            <Card sx={{ minWidth: 675 }} >
             <CardContent>
                 <TextField
+                        sx={{ minWidth: 575 }}
                     className='mb-1 mt-3'
                     label="Ingredient to add"
                     variant="filled"
                     value={ingredientToAdd}
                     onChange={(e) => setIngredientToAdd(e.target.value)}
                 />
-
-                <Button variant="contained" color="primary" className='mt-4' onClick={submitAddIngredient}>
+                <br />
+                    <Button variant="contained" color="primary" className='mt-4' onClick={submitAddIngredient}>
                     Add ingredient
                 </Button>
             </CardContent>
+
         </Card>
+            <br/>
+            <Button variant="outlined" onClick={handleSubmit}>
+                Accept Order
+            </Button>
+        </>
         }
-        <br/>
-        <Button variant="outlined" onClick={handleSubmit}>
-            Accept Order
-        </Button>
+        
 
     </>
 }

@@ -6,7 +6,8 @@ import SnackbarContext from "../../context/SnackbarContext"
 import AppContext from "../../context/AppContext"
 import ContractDetailsTable from "../components/ContractDetailsTable"
 import StateStepper from "../components/StateStepper"
-import { getContractViews, getContractHandler } from "../../Util"
+import { getContractViews, getContractHandler, buyerDelivered } from "../../Util"
+import Loading from "../components/Loading"
 
 export default function BuyerTrack() {
     const navigate = useNavigate()
@@ -14,52 +15,67 @@ export default function BuyerTrack() {
     const {showErrorToast, showSuccessToast} = useContext(SnackbarContext)
     const {account} = useContext(AppContext)
     const [isLoading, setIsLoading] = useState(true)
-    const [ctc, setCtc] = useState(null)
+    const [isRetrievingCtc, setIsRetrievingCtc] = useState(false)
+    const [isSubmit, setIsSubmit] = useState(false)
+    const [url, setUrl] = useState("")
 
-    const [cState, setCState] = useState(0)
-    const [res, setRes] = useState(null)
+    const [ctc, setCtc] = useState({})
+    const [res, setRes] = useState({})
 
     const updateContractViews = useCallback(async () => {
         setIsLoading(true);
 
         try {
-            setRes(await getContractViews({ ctc: ctc }))
+            setRes(await getContractViews({ account: account, ctcInfo: ctcInfo }))
         } catch (e) {
             showErrorToast(e.message);
         }
         showSuccessToast(`Contract retrieve successfully`)
         setIsLoading(false);
+       
     }, [ctc, showErrorToast]);
 
     useEffect(() => {
         if (!ctcInfo) navigate("/")
+        setIsRetrievingCtc(true);
+        (async () => {
+            try {
+                const res = await getContractHandler(account, ctcInfo);
+                setCtc(res)
+            } catch (e) {
+                showErrorToast(e.message);
+            }
 
-        try {
-            const ctc = getContractHandler(account, decodeURI(ctcInfo));
-            setCtc(ctc);
-        } catch (e) {
-            showErrorToast(e.message);
-        }
-    }, [ctcInfo, navigate, showErrorToast]);
+        })();
+        setIsRetrievingCtc(false);
+    }, [ctcInfo, navigate, showErrorToast, setIsRetrievingCtc, setIsSubmit]);
 
     useEffect(() => {
         if (!ctc) return;
         updateContractViews();
-    }, [ctc, updateContractViews]);
+    }, [ctc, updateContractViews, setIsSubmit]);
     
-    const onReceived = () => {
-        setCState(prevState => prevState + 1)
+    const onReceived = async() => {
+        setIsSubmit(true)
+        setIsLoading(true)
+        await buyerDelivered(ctc)
+        setUrl(`http://localhost:3000/#/view/${encodeURI(ctcInfo)}`)
+        setIsSubmit(false)
+        setIsLoading(false)
     }
+
+    if(isRetrievingCtc) return <Loading message="Retrieving contract" />
 
     return <>
         <Title />
         <StateStepper state={res.state} />
-        {cState === 1 && 
+        {res.state === 1 && 
             <Button variant="contained" color="primary" className='mt-4' onClick={onReceived}>
                 Order Received
             </Button>
         }
-        {cState === 3 &&
+        {isSubmit && <Loading message="Approving delivered" />}
+        {res.state === 3 &&
             <>
                 <Card>
                     <CardContent>
@@ -74,8 +90,12 @@ export default function BuyerTrack() {
                     </CardContent>
                 </Card>
                 <h2>Contract Ended</h2>
-                <span>QR???</span>
-                <h2>Please Print This QR At Your Product</h2>
+            <Card sx={{ minWidth: 175, height: 240 }}>
+                <CardContent>
+                    <img src={`https://api.qrserver.com/v1/create-qr-code/?data=${url}&size=150x150`} />
+                </CardContent>
+            </Card>
+            <h2 className="text-success">Please Print This QR At Your Product</h2>
             </>
         }
         

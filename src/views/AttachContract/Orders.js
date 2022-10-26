@@ -9,23 +9,23 @@ import SnackbarContext from "../../context/SnackbarContext"
 import { useNavigate, useParams } from "react-router-dom"
 import { getContractHandler, getContractViews } from "../../Util"
 import ContractDetailsTable from "../components/ContractDetailsTable"
+import ConnectAccount from "../ConnectAccount"
 
 export default function Order () {
-    const navigate = useNavigate()
-    const { contract } = useContext(ContractContext);
-    const {ctcInfo} = useParams()
+    const navigate = useNavigate();
+    const { ctcInfo } = useParams()
     const { account } = useContext(AppContext)
     const { showSuccessToast, showErrorToast} = useContext(SnackbarContext)
     const [isLoading, setIsLoading] = useState(true)
-    const [ctc, setCtc] = useState(null)
 
-    const [res , setRes] = useState(null)
+    const [ctc, setCtc] = useState({})
+    const [res , setRes] = useState({})
     
     const updateContractViews = useCallback(async () => {
         setIsLoading(true);
 
         try {
-            setRes(await getContractViews({ ctc: ctc }))
+            setRes(await getContractViews({ account: account, ctcInfo: ctcInfo }))
         } catch (e) {
             showErrorToast(e.message);
         }
@@ -33,19 +33,19 @@ export default function Order () {
         setIsLoading(false);
     }, [ctc, showErrorToast]);
 
-    useEffect(() => {
-        if (!account) navigate("/");
-    }, [account, navigate]);
 
     useEffect(() => {
-        // if (!ctcInfo) navigate("/");
+        if (!ctcInfo) navigate("/")
 
-        try {
-            const ctc = getContractHandler(account, decodeURI(ctcInfo));
-            setCtc(ctc);
-        } catch (e) {
-            showErrorToast(e.message);
-        }
+        (async () => {
+            try {
+                const res = await getContractHandler(account, ctcInfo);
+                setCtc(res)
+            } catch (e) {
+                showErrorToast(e.message);
+            }
+            
+        })();
     }, [ctcInfo, navigate, showErrorToast]);
 
     useEffect(() => {
@@ -61,13 +61,14 @@ export default function Order () {
         navigate(`/seller/reject/${ctcInfo}`)
     }
 
+    if (!account) return <ConnectAccount />
+
     return <>
         <Title />
         <AccountDetails />
         <h3><i>You are <strong>Seller</strong></i></h3>
-
         
-        {contract ? <Loading message="Displaying contract..." />
+        {!ctc ? <Loading message="Displaying contract..." />
         :
         <div>
             <Card>
@@ -90,6 +91,7 @@ export default function Order () {
             </Card>
             <br />
 
+            {res.state === 0 &&
             <div className="d-flex justify-content-between">
                 <Button variant="outlined" onClick={handleAccept}>
                     Accept Order
@@ -99,6 +101,7 @@ export default function Order () {
                     Reject Order
                 </Button>
             </div>
+            }
         </div>}
     </>
 }
