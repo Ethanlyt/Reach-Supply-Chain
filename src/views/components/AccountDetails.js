@@ -1,18 +1,21 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Typography, Card, CardContent, Button } from "@mui/material"
+import { Typography, Card, CardContent, Button, Box } from "@mui/material"
 
-import { stdlib, getBalance } from "../../Util";
 import AppContext from "../../context/AppContext"
+import SnackbarContext from "../../context/SnackbarContext"
 
 import Loading from "./Loading";
 import ConnectAccount from "./ConnectAccount";
 
+import { stdlib, getBalance } from "../../Util";
+
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 
 
 export default function AccountDetails() {
 
     const { account } = useContext(AppContext);
+    const { showErrorToast } = useContext(SnackbarContext);
 
     const [ isLoading, setIsLoading ] = useState(true);
     const [ address, setAddress ] = useState('');
@@ -24,18 +27,18 @@ export default function AccountDetails() {
     useEffect(() => {
         (async ()=> {
             if (!account) return;
-            setIsConnectingAccount(false);
             
-            const bal = await getBalance(account);
-            setAddress(account.getAddress());
-            setBalance(bal);
-            setStandardUnit(stdlib.standardUnit);
-            setIsLoading(false);
+            try {
+                setAddress(account.getAddress());
+                setBalance(await getBalance(account));
+                setStandardUnit(stdlib.standardUnit);
+            } catch (e) {
+                showErrorToast( e.message || 'Unable to retrieve information about your wallet account');
+            } finally {
+                setIsLoading(false);
+            }
         })();
-    }, [account]);
-
-
-    const isNotConnected = !account;
+    }, [account, showErrorToast]);
 
 
     return <Card sx={{ minWidth: 275 }} className='my-4'>
@@ -43,23 +46,27 @@ export default function AccountDetails() {
 
         {
             isConnectingAccount ?
-            <ConnectAccount />
+            <ConnectAccount setIsConnectingAccount={setIsConnectingAccount} />
             :
-            isNotConnected ?
-            <Typography variant="subtitle1" className='lead'>
-                You are currently not connected to any wallet. 
-                <Button onClick={()=> setIsConnectingAccount(true)}>Connect Now</Button>
-            </Typography>
+            !account ?
+            <Box className='text-center'>
+                <Typography variant="subtitle1" className='lead text-center mb-3'>
+                    You are currently not connected to any wallet.
+                </Typography>
+
+                <Button variant='contained' onClick={()=> setIsConnectingAccount(true)}>Connect</Button>
+            </Box>
             :
             isLoading ?
             <Loading message="Loading account details..." /> 
             :
             <>
                 <Typography variant="h6" className='mb-4'>
-                    Your Account Details
+                    Account Details
+                    <AccountBalanceWalletIcon sx={{ ml: 1 }} />
                 </Typography>
 
-                <Typography color="text.secondary" gutterBottom>
+                <Typography color="text.secondary" gutterBottom sx={{ wordBreak: "break-all" }}>
                     Wallet Address: <strong>{ address }</strong>
                 </Typography>
 

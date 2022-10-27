@@ -55,10 +55,10 @@ export default function AcceptOrder () {
                 setCtc(res)
             } catch (e) {
                 showErrorToast(e.message);
+            } finally {
+                setIsRetrievingCtc(false);
             }
-
         })();
-        setIsRetrievingCtc(false);
     }, [ctcInfo, account, navigate, showErrorToast, setIsRetrievingCtc]);
 
     useEffect(() => {
@@ -103,52 +103,56 @@ export default function AcceptOrder () {
         <Title />
         <AccountDetails />
 
-        <Typography variant='h5'><i>You are <strong>Seller</strong></i></Typography>
+        <Typography variant='h4' className='mb-3'>
+            You are <strong>Supplier</strong>
+        </Typography>
 
-        <Card sx={{ minWidth: 675 }}>
-            <CardContent>
-                <ContractDetailsTable
-                    isLoading={isLoading}
+        <Card sx={{ mb: 3 }}>
+        <CardContent>
+            <ContractDetailsTable
+                isLoading={isLoading}
 
-                    contractAddress={res.contractAddress}
-                    name={res.name}
-                    buyerAddress={res.buyerAddress}
-                    supplierAddress={res.supplierAddress}
-                    state={res.state}
-                    listOfIngredients={res.listOfIngredients}
-                    rejectReason={res.rejectReason}
-                    deployedNetworkTime={res.deployedNetworkTime}
-                    reviewedNetworkTime={res.reviewedNetworkTime}
-                    deliveredNetworkTime={res.deliveredNetworkTime}
-                />
-            </CardContent>
+                contractAddress={res.contractAddress}
+                name={res.name}
+                buyerAddress={res.buyerAddress}
+                supplierAddress={res.supplierAddress}
+                state={res.state}
+                listOfIngredients={res.listOfIngredients}
+                rejectReason={res.rejectReason}
+                deployedNetworkTime={res.deployedNetworkTime}
+                reviewedNetworkTime={res.reviewedNetworkTime}
+                deliveredNetworkTime={res.deliveredNetworkTime}
+            />
+        </CardContent>
         </Card>
 
 
         {
             isSubmitting ? 
-            <Loading message='Submitting ingredient...' /> :
+            <Loading message='Submitting ingredient...' /> 
+            :
             isSubmit ?
-            <Loading message='Approving order' /> :
+            <Loading message='Approving order' /> 
+            :
             <>
-                <Card sx={{ minWidth: 675 }} >
+                <Card sx={{ mb: 3 }}>
                 <CardContent>
                     <TextField
-                            sx={{ minWidth: 575 }}
-                        className='mb-1 mt-3'
+                        sx={{ minWidth: 300, my: 1 }}
                         label="Ingredient to add"
                         variant="filled"
                         value={ingredientToAdd}
                         onChange={(e) => setIngredientToAdd(e.target.value)}
                     />
-                    <br />
-                    <Button variant="contained" color="primary" className='mt-4' onClick={submitAddIngredient}>
+
+                    <br/>
+
+                    <Button variant="contained" color="primary" onClick={submitAddIngredient}>
                         Add ingredient
                     </Button>
                 </CardContent>
                 </Card>
 
-                <br/>
                 <Button variant="outlined" onClick={handleSubmit}>
                     Accept Order
                 </Button>

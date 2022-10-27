@@ -1,25 +1,30 @@
-import { Button, TextField, Typography, Card, CardContent } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
+import { Button, TextField, Typography, Card, CardContent } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
+
 import AppContext from "../../context/AppContext";
-import { getContractHandler, supplierReject } from "../../Util";
+import SnackbarContext from "../../context/SnackbarContext";
 
 import ContractDetailsTable from "../components/ContractDetailsTable";
 import Title from "../components/Title";
-import SnackbarContext from "../../context/SnackbarContext";
 import Loading from "../components/Loading";
+
+import { getContractHandler, supplierReject } from "../../Util";
+
 
 
 export default function RejectOrder() {
-    const navigate = useNavigate()
-    const {showErrorToast} = useContext(SnackbarContext)
+    const navigate = useNavigate();
+    const {ctcInfo} = useParams();
+
+    const {showErrorToast} = useContext(SnackbarContext);
+    
     const [reason, setReason] = useState("");
-    const [isSubmit, setIsSubmit] = useState(false)
-    const {ctcInfo} = useParams()
-    const [isLoading, setIsLoading] = useState(false)
-    const [isRetrievingCtc, setIsRetrievingCtc] = useState(true)
-    const [ctc, setCtc] = useState({})
-    const [isfinish, setIsFinish] = useState(false)
+    const [isSubmit, setIsSubmit] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isRetrievingCtc, setIsRetrievingCtc] = useState(true);
+    const [ctc, setCtc] = useState({});
+    const [isfinish, setIsFinish] = useState(false);
 
     
     const {
@@ -27,39 +32,45 @@ export default function RejectOrder() {
     } = useContext(AppContext);
 
     useEffect(() => {
-        if (!ctcInfo) navigate("/")
+        if (!ctcInfo) navigate("/");
         setIsRetrievingCtc(true);
+
         (async () => {
             try {
                 const res = await getContractHandler(account, ctcInfo);
-                setCtc(res)
+                setCtc(res);
             } catch (e) {
                 showErrorToast(e.message);
+            } finally {
+                setIsRetrievingCtc(false);
             }
-            
         })();
-        setIsRetrievingCtc(false);
     }, [account, ctcInfo, navigate, showErrorToast, setIsRetrievingCtc]);
     
 
     const handleSubmit = async() => {
-        setIsSubmit(true)
-        setIsLoading(true)
-        setIsFinish(true)
-        await supplierReject(ctc, reason)
-        setIsSubmit(false)
-        setIsLoading(false)
+        setIsSubmit(true);
+        setIsLoading(true);
         
+        try {
+            await supplierReject(ctc, reason);
+        } catch (e) {
+            showErrorToast(e.message);
+        } finally {
+            setIsFinish(true);
+            setIsSubmit(false);
+            setIsLoading(false);
+        }
     }
-    
-    const toHome = () => {
-        navigate('/')
-    }
+
+
 
     return <>
         <Title />
     
-        <h3><i>You are <strong>Seller</strong></i></h3>
+        <Typography variant='h4' className='mb-3'>
+            You are <strong>Supplier</strong>
+        </Typography>
 
         {  
             !isSubmit && !isfinish && 
@@ -73,7 +84,7 @@ export default function RejectOrder() {
                     multiline
                     rows={4}
                     variant="filled"
-                    sx={{ minWidth: '400px', maxWidth: '700px' }}
+                    sx={{ minWidth: '300px', maxWidth: '700px' }}
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
                 />
@@ -100,21 +111,21 @@ export default function RejectOrder() {
         {
             !isSubmit && !isRetrievingCtc && isfinish && 
             <>
-
                 <Card>
                 <CardContent>
                     <ContractDetailsTable
-                        isLoading={isLoading}
+                        isLoading={isRetrievingCtc}
                         contractAddress={decodeURI(ctcInfo)}
                     />
                 </CardContent>
                 </Card>
-                <br />
-                <h3 className="text-danger" >Contract Rejected Successfully</h3>
 
+                <Typography variant='h6' className='my-3 text-danger'>
+                    Contract has been rejected
+                </Typography>
 
                 <Button
-                    onClick={toHome}
+                    onClick={()=> navigate('/')}
                     variant="contained"
                     className='my-2'
                 >
