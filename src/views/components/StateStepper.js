@@ -1,3 +1,10 @@
+// ? Author: AdmiJW
+// ? 
+// ? This component renders a stepper component to show the state of a contract.
+// ? See: https://mui.com/components/steppers/
+
+
+
 import React from "react";
 import { Stepper, Step, StepLabel, StepContent, Typography } from "@mui/material";
 

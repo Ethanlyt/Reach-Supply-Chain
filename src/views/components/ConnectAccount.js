@@ -7,11 +7,11 @@ import SnackbarContext from "../../context/SnackbarContext";
 import { stdlib } from "../../Util";
 
 
-export default function ConnectAccount() {
+export default function ConnectAccount({ setIsConnectingAccount }) {
 
     const {
         account, 
-        setAccount, 
+        setAccount,
     } = useContext(AppContext);
 
 
@@ -28,9 +28,11 @@ export default function ConnectAccount() {
             } 
             catch (err) {
                 showErrorToast( err.message || 'Unable to connect to your wallet');
+            } finally {
+                if (setIsConnectingAccount) setIsConnectingAccount(false);
             }
         })();
-    }, [account, setAccount, showSuccessToast, showErrorToast]);
+    }, [account, setAccount, showSuccessToast, showErrorToast, setIsConnectingAccount]);
 
 
     return <Loading message="Attempting to retrieve wallet information..." />;

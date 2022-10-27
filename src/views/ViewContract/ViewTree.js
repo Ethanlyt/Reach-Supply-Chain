@@ -1,3 +1,11 @@
+// ? Author: AdmiJW
+// ? 
+// ? Inside the drawer is basically a tree view of the contracts.
+// ? Therefore the TreeItems has to be generated recursively.
+// ? See: https://mui.com/components/tree-view/
+
+
+
 import React from 'react';
 import { Box, } from '@mui/material';
 import { TreeView, TreeItem  } from '@mui/lab';

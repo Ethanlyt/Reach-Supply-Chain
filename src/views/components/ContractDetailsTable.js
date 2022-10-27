@@ -1,3 +1,8 @@
+// ? Author: AdmiJW
+// ? 
+// ? This component displays the contract information in a table.
+
+
 import React from "react";
 import { TableContainer, Table, TableBody, TableRow, TableCell } from "@mui/material";
 
@@ -61,7 +66,7 @@ export default function ContractDetailsTable({
                         Contract Address
                     </TableCell>
 
-                    <TableCell sx={{ flex: 1, py: 1, }} align='left'>{ contractAddress }</TableCell>
+                    <TableCell sx={{ flex: 1, py: 1, wordBreak: "break-all" }} align='left'>{ contractAddress }</TableCell>
                 </TableRow>: null
             }
 
@@ -72,7 +77,7 @@ export default function ContractDetailsTable({
                         Buyer Address
                     </TableCell>
 
-                    <TableCell sx={{ flex: 1, py: 1, }} align='left' >{ buyerAddress }</TableCell>
+                    <TableCell sx={{ flex: 1, py: 1, wordBreak: "break-all" }} align='left' >{ buyerAddress }</TableCell>
                 </TableRow>: null
             }
 
@@ -83,7 +88,7 @@ export default function ContractDetailsTable({
                         Supplier Address
                     </TableCell>
 
-                    <TableCell sx={{ flex: 1, py: 1, }} align='left'>{ supplierAddress }</TableCell>
+                    <TableCell sx={{ flex: 1, py: 1, wordBreak: "break-all" }} align='left'>{ supplierAddress }</TableCell>
                 </TableRow>: null
             }
             
@@ -99,7 +104,7 @@ export default function ContractDetailsTable({
                             {
                                 listOfIngredients
                                     .filter(ing => ing !== contractAddress)
-                                    .map((ing, i)=> <li key={i}>{ing}</li>)
+                                    .map((ing, i)=> <li className='text-break' key={i}>{ing}</li>)
                             }
                         </ul>
                     </TableCell>
