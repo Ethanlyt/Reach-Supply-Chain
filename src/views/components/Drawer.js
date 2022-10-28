@@ -1,3 +1,9 @@
+// ? Author: AdmiJW
+// ?
+// ? This component renders a drawer component to navigate between contracts.
+// ? See: https://mui.com/components/drawers/
+
+
 import React from "react";
 import { Drawer, IconButton, Typography, Divider, Fab } from "@mui/material";
 import { styled } from "@mui/material/styles";
@@ -10,14 +16,14 @@ export const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
     padding: theme.spacing(0, 1),
+    justifyContent: 'flex-end',
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
-    justifyContent: 'flex-end',
 }));
 
 
 
-export function FloatingActionButtonDrawerToggle({ children, onClick, label }) {
+export function FloatingActionButtonDrawerToggle({ onClick, label }) {
     return <>
         <Fab 
             variant="extended"

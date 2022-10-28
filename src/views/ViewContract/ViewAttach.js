@@ -4,17 +4,18 @@ import { Typography, Button, TextField } from "@mui/material";
 
 import SnackbarContext from "../../context/SnackbarContext";
 import Title from "../components/Title";
-import AppContext from "../../context/AppContext";
 import Loading from "../components/Loading";
 
-import { parseAddress, getContractViews } from "../../Util";
+import { parseAddress } from "../../Util";
+
+
 
 export default function ViewAttach() {
 
     const navigate = useNavigate();
     
     const [ ctcInfoInput, setCtcInfoInput ] = useState('');
-    const [ isLoading, setIsLoading] = useState(false)
+    const [ isLoading, setIsLoading] = useState(false);
     const { showErrorToast, showSuccessToast } = useContext(SnackbarContext);
 
     const onSubmit = async ()=> {
@@ -26,7 +27,7 @@ export default function ViewAttach() {
             parseAddress(ctcInfoInput)
         } 
         catch (e) { return showErrorToast(e.message) }
-        setIsLoading(false)
+        setIsLoading(false);
 
         showSuccessToast(`Displaying contract: ${ctcInfoInput}`);
         navigate(`/view/${encodeURI(ctcInfoInput)}`);   

@@ -31,7 +31,7 @@ export default function ViewAttach() {
     const [ contracts, setContracts ] = useState({});
 
     const [ isDrawerOpen, setIsDrawerOpen ] = useState(false);
-    const [ isLoading, setIsLoading ] = useState(false);
+    const [ isLoading, setIsLoading ] = useState(true);
     const [ isChildrenLoading, setIsChildrenLoading ] = useState(false);
 
 

@@ -1,52 +1,58 @@
-import React, { useContext, useState, useEffect, useCallback } from "react"
-import Loading from "../components/Loading"
-import { Button, Card, Typography, CardContent } from "@mui/material"
-import Title from '../components/Title'
-import AccountDetails from "../components/AccountDetails"
-import ContractContext from "../../context/ContractContext"
-import AppContext from "../../context/AppContext"
-import SnackbarContext from "../../context/SnackbarContext"
-import { useNavigate, useParams } from "react-router-dom"
-import { getContractHandler, getContractViews } from "../../Util"
-import ContractDetailsTable from "../components/ContractDetailsTable"
-import ConnectAccount from "../ConnectAccount"
+import React, { useContext, useState, useEffect, useCallback } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Button, Card, CardContent, Typography } from "@mui/material";
 
-export default function Order () {
+import Loading from "../components/Loading";
+import Title from '../components/Title';
+import AccountDetails from "../components/AccountDetails";
+import ContractDetailsTable from "../components/ContractDetailsTable";
+import ConnectAccount from "../components/ConnectAccount";
+
+import AppContext from "../../context/AppContext";
+import SnackbarContext from "../../context/SnackbarContext";
+
+import { getContractHandler, getContractViews } from "../../Util";
+
+
+export default function Order() {
     const navigate = useNavigate();
-    const { ctcInfo } = useParams()
-    const { account } = useContext(AppContext)
-    const { showSuccessToast, showErrorToast} = useContext(SnackbarContext)
-    const [isLoading, setIsLoading] = useState(true)
+    const { ctcInfo } = useParams();
+    const { account } = useContext(AppContext);
+    const { showSuccessToast, showErrorToast} = useContext(SnackbarContext);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const [ctc, setCtc] = useState({})
-    const [res , setRes] = useState({})
+    const [ctc, setCtc] = useState({});
+    const [res , setRes] = useState({});
     
     const updateContractViews = useCallback(async () => {
         setIsLoading(true);
 
         try {
-            setRes(await getContractViews({ account: account, ctcInfo: ctcInfo }))
+            setRes(await getContractViews({ account: account, ctcInfo: ctcInfo }));
         } catch (e) {
             showErrorToast(e.message);
         }
-        showSuccessToast(`Contract retrieve successfully`)
+
+        showSuccessToast(`Contract retrieve successfully`);
         setIsLoading(false);
-    }, [ctc, showErrorToast]);
+    }, [showErrorToast, account, ctcInfo, showSuccessToast]);
 
 
     useEffect(() => {
-        if (!ctcInfo) navigate("/")
+        if (!ctcInfo) {
+            showErrorToast("No contract info provided");
+            return navigate("/");
+        }
 
         (async () => {
             try {
                 const res = await getContractHandler(account, ctcInfo);
-                setCtc(res)
+                setCtc(res);
             } catch (e) {
                 showErrorToast(e.message);
             }
-            
         })();
-    }, [ctcInfo, navigate, showErrorToast]);
+    }, [account, ctcInfo, navigate, showErrorToast]);
 
     useEffect(() => {
         if (!ctc) return;
@@ -54,24 +60,23 @@ export default function Order () {
     }, [ctc, updateContractViews]);
 
 
-    const handleAccept = () =>{
-        navigate(`/seller/accept/${ctcInfo}`)
-    }
-    const handleReject = () => {
-        navigate(`/seller/reject/${ctcInfo}`)
-    }
 
-    if (!account) return <ConnectAccount />
+    if (!account) return <ConnectAccount />;
 
     return <>
         <Title />
         <AccountDetails />
-        <h3><i>You are <strong>Seller</strong></i></h3>
+
+        <Typography variant='h4' className='mb-3'>
+            You are <strong>Supplier</strong>
+        </Typography>
         
-        {!ctc ? <Loading message="Displaying contract..." />
-        :
-        <div>
-            <Card>
+        {
+            !ctc ? 
+            <Loading message="Displaying contract..." />
+            :
+            <>
+                <Card sx={{ mb: 3 }}>
                 <CardContent>
                     <ContractDetailsTable
                         isLoading={isLoading}
@@ -88,20 +93,21 @@ export default function Order () {
                         deliveredNetworkTime={res.deliveredNetworkTime}
                     />
                 </CardContent>
-            </Card>
-            <br />
+                </Card>
 
-            {res.state === 0 &&
-            <div className="d-flex justify-content-between">
-                <Button variant="outlined" onClick={handleAccept}>
-                    Accept Order
-                </Button>
-            
-                    <Button variant="outlined" onClick={handleReject}>
-                    Reject Order
-                </Button>
-            </div>
-            }
-        </div>}
+                {
+                    res.state === 0 &&
+                    <div className="d-flex justify-content-center gap-2">
+                        <Button variant="outlined" onClick={()=> navigate(`/seller/accept/${ctcInfo}`)}>
+                            Accept Order
+                        </Button>
+                    
+                        <Button variant="outlined" onClick={()=> navigate(`/seller/reject/${ctcInfo}`)}>
+                            Reject Order
+                        </Button>
+                    </div>
+                }
+            </>
+        }
     </>
 }
