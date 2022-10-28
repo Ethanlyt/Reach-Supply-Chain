@@ -8,13 +8,12 @@ import { Container } from "@mui/material";
 import RoutedContextGroup from "./context/RoutedContextGroup";
 
 
-function App() {
+export default function App() {
     return <>
-        
-
         <HashRouter>
             <RoutedContextGroup>
                 <NavBar />
+
                 <Container className="d-flex flex-column align-items-center py-5">
                     <AppRoutes />
                 </Container>
@@ -22,7 +21,3 @@ function App() {
         </HashRouter>
     </>;
 }
-
-
-
-export default App;

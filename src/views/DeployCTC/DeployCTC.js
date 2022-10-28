@@ -1,6 +1,6 @@
 import React, {useState, useContext, useEffect} from 'react'
-import { json, useNavigate } from "react-router-dom"
-import { Typography, Button, TextField } from "@mui/material"; 
+import { useNavigate } from "react-router-dom"
+import { Button, TextField, Card, Typography, CardContent } from "@mui/material"; 
 
 import Title from '../components/Title'
 import Loading from '../components/Loading'
@@ -8,89 +8,112 @@ import AppContext from '../../context/AppContext';
 import SnackbarContext from '../../context/SnackbarContext';
 import AccountDetails from '../components/AccountDetails';
 
-import {deployContract, parseAddress, stdlib} from '../../Util'
+import {deployContract, parseAddress } from '../../Util';
+
+import IosShareIcon from '@mui/icons-material/IosShare';
+
 
 export default function DeployCTC () {
-    const navigate = useNavigate()
-    const [name, setName] = useState("")
-    const [sellerAddress, setSellerAddress] = useState("")
-    const [isSubmit, setIsSubmit] = useState(true)
+    const navigate = useNavigate();
+    
+    const [name, setName] = useState("");
+    const [supplierAddress, setSupplierAddress] = useState("");
+    const [isSubmit, setIsSubmit] = useState(true);
 
-
-    const {
-        account
-    } = useContext(AppContext);
+    const { account } = useContext(AppContext);
 
     const {
-        showErrorToast, showSuccessToast
+        showErrorToast, 
+        showSuccessToast,
+        showWarningToast,
     } = useContext(SnackbarContext);
 
-    const handleSubmitDeploy = async () => {
-        if(name === "" || sellerAddress === "") return showErrorToast("Please fill in the required information")
-        
+
+    const handleSubmitDeploy = async (e) => {
+        e.preventDefault();
+
+        if (!name || !supplierAddress) return showErrorToast("Please fill in the required information");
         setIsSubmit(false);
 
         try {
             const ctcInfo = await deployContract(account, {
-                name: name,
+                name,
                 buyerAddress: account,
-                supplierAddress: sellerAddress,
+                supplierAddress,
             });
+
             showSuccessToast(`Contract deployed successfully : ${ parseAddress(ctcInfo) }`);
-            //Displaying the qr
-            navigate(`/buyer/detail/${encodeURI(ctcInfo)}`)
+            navigate(`/buyer/detail/${encodeURI(ctcInfo)}`);
         } catch (error) {
             showErrorToast(error.message);
+        } finally {
             setIsSubmit(true);
         }
     }
 
 
     useEffect( () => {
-        if (!account) navigate('/')
-    }, [account, navigate])
+        if (account) return;
+
+        navigate('/');
+        showWarningToast("Please connect to an account first!");
+    }, [account, navigate, showWarningToast]);
+
 
     return  <>
         <Title />
         <AccountDetails />
-        <span>Deploy New Contract</span>
-        <br />
-        <div className="d-flex flex-column">
-            <TextField
-                required
-                label="Ingredient Name"
-                rows={1}
-                variant="filled"
-                sx={{ minWidth: '400px', maxWidth: '700px' }}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-            />
-            <br />
-            <TextField
-                required
-                label="Seller Address"
-                multiline
-                rows={4}
-                variant="filled"
-                sx={{ minWidth: '400px', maxWidth: '700px' }}
-                value={sellerAddress}
-                onChange={(e) => setSellerAddress(e.target.value)}
-            />
-            <br /><br />
 
-            { isSubmit ? <Button
-                variant="outlined"
-                size="large"
-                onClick={handleSubmitDeploy}
-            >
-                Deploy Contract
-            </Button> 
-            :
-            <div className="text-center"> 
-                <Loading message="Deploying Contract ..." />
-            </div>
-            }
+        <Card>
+        <CardContent>
+            <Typography variant="h6" sx={{ mb: 3 }}>
+                Deploy SmartSource Contract
+            </Typography>
 
-        </div>    
+            <form className="d-flex flex-column" onSubmit={handleSubmitDeploy}>
+
+                <TextField
+                    required
+                    label="Ingredient Name"
+                    placeholder='e.g. "Apple"'
+                    variant="filled"
+                    sx={{ minWidth: '300px', maxWidth: '700px', mb: 2 }}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                />
+
+
+                <TextField
+                    required
+                    label="Supplier's Address"
+                    placeholder='e.g. "0x1234...45678"'
+                    multiline
+                    variant="filled"
+                    sx={{ minWidth: '300px', maxWidth: '700px', mb: 2 }}
+                    value={supplierAddress}
+                    onChange={(e) => setSupplierAddress(e.target.value)}
+                />
+
+                {
+                    isSubmit ? 
+                    <Button
+                        variant="outlined"
+                        size="large"
+                        type="submit"
+                    >
+                        Deploy Contract
+                        <IosShareIcon sx={{ ml: 1 }} />
+                    </Button> 
+                    :
+                    <div className="text-center"> 
+                        <Loading message="Deploying Contract ..." />
+                    </div>
+                }
+
+            </form>    
+        </CardContent>
+        </Card>
+
+        
     </>
 }

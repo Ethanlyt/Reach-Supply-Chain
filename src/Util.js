@@ -1,4 +1,8 @@
-// * Main utilities and functions to interact with the backend and reach standard library
+// ? Author: AdmiJW, Ethanlyt
+// ?
+// ? This module export functions and data that interact with the reach backend 
+
+
 
 import { loadStdlib, ALGO_MyAlgoConnect } from "@reach-sh/stdlib";
 import * as backend from "./reach-backend/index.main.mjs";
@@ -30,6 +34,14 @@ stdlib.setWalletFallback(stdlib.walletFallback({
 }));
 
 
+// .env should have two links: REACT_APP_DEV_URL and REACT_APP_PROD_LINK
+// Retrieves the one that matches the current environment
+export function getAppLink() {
+    const { REACT_APP_DEV_URL, REACT_APP_PROD_LINK } = process.env;
+    return process.env.NODE_ENV === 'development' ? REACT_APP_DEV_URL : REACT_APP_PROD_LINK;
+}
+
+
 
 // Deploys the contract with given account and details object
 // Once completed, await will return the contract address
@@ -39,7 +51,7 @@ export async function deployContract(account, details) {
     const ctc = account.contract(backend);
     await stdlib.withDisconnect(() => ctc.p.Buyer({
         details,
-        launched: (info) => stdlib.disconnect(info)
+        launched: (info) => stdlib.disconnect(info),
     }));
 
     return parseAddress(await ctc.getInfo() );
@@ -74,6 +86,10 @@ export async function getContractHandler(account, ctcInfo) {
 // On Etherium, contractInfo is a string, return as it is.
 // On Algorand, contractInfo is an BigNumber object, return after parseInt.
 export function parseAddress(address) {
+    // If provided with a stringified JSON, parse it first 
+    try { address = JSON.parse(address); } 
+    catch (e) {}
+
     if (typeof address === 'string') return address;
     if (address.type === 'BigNumber') return address.hex;
     if (address._isBigNumber) return address._hex;
@@ -110,6 +126,7 @@ export async function getContractViews({
     deliveredNetworkTime = true,
 }) {
     if (!ctc) ctc = await getContractHandler(account, ctcInfo);
+    
     const res = {};
     if (name) res.name = removeNullChar( await ctc.unsafeViews.Explorer.name() );
     if (buyerAddress) res.buyerAddress = parseAddress( await ctc.unsafeViews.Explorer.buyerAddress() );
@@ -126,10 +143,11 @@ export async function getContractViews({
 }
 
 
-// APIS
+// APIS. Better to use try {} catch {} to handle errors
 export async function supplierReject(contract, reason) {
     return await contract.a.SellerAPI.reject(reason);
 }
+
 export async function supplierAddIngredient(contract, ingredient) {
     return await contract.a.SellerAPI.addIngredient(ingredient);
 }

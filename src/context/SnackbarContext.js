@@ -1,6 +1,10 @@
+// ? Author: AdmiJW
+// ? 
+// ? Context as well as the container for snackbar component.
+// ? See: https://material-ui.com/components/snackbars/
+
 import React, { useState, useCallback, createContext } from "react";
-import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
+import { Snackbar, Alert } from "@mui/material";
 
 
 const SnackbarContext = createContext(null);
@@ -47,8 +51,9 @@ function SnackbarContextProvider({ children }) {
                 open={isToastShown}
                 autoHideDuration={6000}
                 onClose={handleToastClose}
+                sx={{ maxWidth: '95vw' }}
             >
-                <Alert severity={toastSeverity} sx={{ width: '100%' }}>
+                <Alert severity={toastSeverity} sx={{ width: '100%' }} onClose={handleToastClose}>
                     {toastMessage}
                 </Alert>
             </Snackbar>
