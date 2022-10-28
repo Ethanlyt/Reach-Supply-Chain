@@ -50,6 +50,8 @@ export default function SellerTrack () {
         updateContractViews();
     }, [ctc, updateContractViews]);
 
+    if (!account) return <ConnectAccount />
+
     return <>
         <Title />
         <h3><i>You are <strong>Seller</strong></i></h3>
