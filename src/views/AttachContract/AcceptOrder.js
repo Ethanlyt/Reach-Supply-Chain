@@ -82,6 +82,7 @@ export default function AcceptOrder () {
     } 
 
     const submitAddIngredient = async () => {
+        if (!ingredientToAdd) return showErrorToast("Please fill in the address of the ingredient");
         setIsSubmitting(true);
 
         try {
