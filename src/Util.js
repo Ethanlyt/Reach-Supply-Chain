@@ -84,6 +84,27 @@ export function parseCurrency(amount) {
 }
 
 
+// From URL, tries to extract the portion containing the contract address
+// The available URL formats are only the ones defined in the regex
+export function extractContractInfoFromUrl(url) {
+    url = decodeURI(url);
+
+    for (let regex of [
+        /view\/(.*)/g,
+        /seller\/order\/(.*)/g,
+    ]) {
+        const match = regex.exec(url);
+        if (!match || !match[1]) continue;
+        
+        let ctcInfo = match[1];
+        try { ctcInfo = JSON.parse(ctcInfo) }
+        catch (e) {}
+
+        return parseAddress(ctcInfo);
+    }
+}
+
+
 // Get balance of provided account (address)
 export async function getBalance(account) {
     return formatCurrency(await stdlib.balanceOf(account) );

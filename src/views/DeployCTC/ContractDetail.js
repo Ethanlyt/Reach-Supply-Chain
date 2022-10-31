@@ -43,7 +43,7 @@ export default function ContractDetail () {
 
     // Downloads the QR code image
     const handleShareQR = () => {
-        saveAs(qr, 'source-smart-qr.jpg');
+        saveAs(qr, `sourcesmart-${ctcInfo}.jpg`);
         showSuccessToast("Saved QR, please share QR to the seller");
     }
 

@@ -8,6 +8,7 @@
 import React, { useContext, useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Card, CardContent, Typography } from "@mui/material";
+import { saveAs } from 'file-saver';
 
 import SnackbarContext from "../../context/SnackbarContext";
 import AppContext from "../../context/AppContext";
@@ -66,6 +67,12 @@ export default function BuyerTrack() {
         } finally {
             setIsSubmittingDelivered(false);
         }
+    }
+
+
+    const downloadQr = () => {
+        saveAs(qr, `sourcesmart-${ctcInfo}.jpg`);
+        showSuccessToast("QR downloaded");
     }
 
 
@@ -147,20 +154,31 @@ export default function BuyerTrack() {
 
                 <Typography variant='h5' className='my-3'>Contract Ended</Typography>
 
-                <Card sx={{ minWidth: 175, height: 280 }}>
-                    <CardContent>
-                        {
-                            qr ?
+                <Card sx={{ minWidth: 175 }}>
+                <CardContent className='text-center'>
+                    {
+                        qr ?
+                        <>
                             <img src={qr} alt="QR Code" />
-                            :
-                            <Loading message="Generating QR Code" />
-                        }
-                    </CardContent>
+                            <br/>
+
+                            <Button variant="contained" color="primary" className='mt-3' onClick={downloadQr}>
+                                Download QR
+                            </Button>
+                            
+                            <Typography className="text-success my-3">
+                                Please Print This QR At Your Product For Public to View
+                            </Typography>
+                        </>
+                        :
+                        <Loading message="Generating QR Code" />
+                    }
+
+                    
+                    
+                </CardContent>
                 </Card>
 
-                <Typography className="text-success my-3">
-                    Please Print This QR At Your Product For Public to View
-                </Typography>
             </>
         }
     </>
