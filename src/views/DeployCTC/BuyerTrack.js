@@ -75,14 +75,12 @@ export default function BuyerTrack() {
         }
     }
 
-    const generateQR = async () => {
-        QRCode.toDataURL(url, opts, function (err, qrcode) {
-            if (err)
-                throw err;
-
-            var img = document.getElementById('qrImage');
-            img.src = qrcode;
-        })
+    const generateQR = async (url) => {
+        try {
+            return QRCode.toDataURL(url, opts);
+        } catch (err) {
+            return showErrorToast("Unable to generate QR code");
+        }
     }
 
     useEffect(() => {
@@ -98,8 +96,7 @@ export default function BuyerTrack() {
                 setCtc(ctc);
                 await updateContractViews(ctc);
                 setUrl(`${ getAppLink() }${ encodeURI(ctcInfo) }`);
-                const qrInfo = await generateQR();
-                setQR(qrInfo);
+                setQR(await generateQR(`${getAppLink()}seller/order/${ctcInfo}`));
             } catch (e) {
                 showErrorToast(e.message);
             }
@@ -158,7 +155,6 @@ export default function BuyerTrack() {
                 <Card sx={{ minWidth: 175, height: 280 }}>
                     <CardContent>
                         <img
-                            id="qrImage"
                             src={qr} 
                             alt='QR to view contract details'
                         />

@@ -49,9 +49,9 @@ export default function ContractDetail () {
         showSuccessToast("Link Copied to Clipboard, please share link to the seller");
     }
     
-    const generateQR = async () => {
+    const generateQR = async (url) => {
         try {
-            return await QRCode.toDataURL(url, opts);
+            return QRCode.toDataURL(url, opts);
         } catch (err) {
             return showErrorToast("Unable to generate QR code");
         }
@@ -83,18 +83,19 @@ export default function ContractDetail () {
                 showSuccessToast("Contract information retrieved successfully");
                 setUrl(`${ getAppLink() }seller/order/${ctcInfo}`);
                 // const qrInfo = await generateQR();
-                setQR(generateQR());
+                setQR(await generateQR(`${getAppLink()}seller/order/${ctcInfo}`));
             } catch (e) {
                 showErrorToast(e.message);
             } finally {
                 setIsLoading(false);
             }
         })();
-    }, [account, ctcInfo, showSuccessToast, showErrorToast, navigate, qr]);
+    }, [account, ctcInfo, showSuccessToast, showErrorToast, navigate]);
 
 
 
     return <>
+    {console.log(qr)}
         <Title />
         <AccountDetails />
 
@@ -144,7 +145,6 @@ export default function ContractDetail () {
                 <Card sx={{ minWidth: 175, mb: 2, flex: 1 }}>
                 <CardContent>
                     <img 
-                        id='qrImage'
                         src={qr} 
                         alt='QR for seller to attach' 
                     />
