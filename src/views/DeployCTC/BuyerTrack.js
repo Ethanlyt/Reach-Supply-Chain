@@ -8,6 +8,7 @@
 import React, { useContext, useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Card, CardContent, Typography } from "@mui/material";
+import QRCode from 'qrcode';
 
 import SnackbarContext from "../../context/SnackbarContext";
 import AppContext from "../../context/AppContext";
@@ -21,6 +22,16 @@ import { getContractViews, getContractHandler, buyerDelivered, getAppLink } from
 import ConnectAccount from "../components/ConnectAccount";
 
 
+var opts = {
+    errorCorrectionLevel: 'H',
+    type: 'image/jpeg',
+    quality: 0.3,
+    margin: 1,
+    color: {
+        dark: "#000000",
+        light: "#FFFFFFFF"
+    }
+}
 
 export default function BuyerTrack() {
     const navigate = useNavigate();
@@ -34,6 +45,7 @@ export default function BuyerTrack() {
     const [url, setUrl] = useState("");
     const [ctc, setCtc] = useState({});
     const [res, setRes] = useState({});
+    const [qr, setQR] = useState("");
 
 
     const updateContractViews = useCallback(async (ctc)=> {
@@ -63,6 +75,15 @@ export default function BuyerTrack() {
         }
     }
 
+    const generateQR = async () => {
+        QRCode.toDataURL(url, opts, function (err, qrcode) {
+            if (err)
+                throw err;
+
+            var img = document.getElementById('qrImage');
+            img.src = qrcode;
+        })
+    }
 
     useEffect(() => {
         if (!account) return showErrorToast("No account connected. You have to connect to your account to perform actions.");
@@ -77,10 +98,13 @@ export default function BuyerTrack() {
                 setCtc(ctc);
                 await updateContractViews(ctc);
                 setUrl(`${ getAppLink() }${ encodeURI(ctcInfo) }`);
+                const qrInfo = await generateQR();
+                setQR(qrInfo);
             } catch (e) {
                 showErrorToast(e.message);
             }
         })();
+        
     }, [account, showErrorToast, ctcInfo, navigate, updateContractViews]);
 
 
@@ -134,7 +158,8 @@ export default function BuyerTrack() {
                 <Card sx={{ minWidth: 175, height: 280 }}>
                     <CardContent>
                         <img
-                            src={`https://api.qrserver.com/v1/create-qr-code/?data=${url}&size=150x150`} 
+                            id="qrImage"
+                            src={qr} 
                             alt='QR to view contract details'
                         />
                     </CardContent>
