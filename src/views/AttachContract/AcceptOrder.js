@@ -39,6 +39,7 @@ export default function AcceptOrder () {
             setRes(await getContractViews({ account: account, ctcInfo: ctcInfo }));
         } catch (e) {
             showErrorToast(e.message);
+            console.error(e);
         }
 
         showSuccessToast(`Contract retrieve successfully`);
@@ -55,6 +56,7 @@ export default function AcceptOrder () {
                 setCtc(res)
             } catch (e) {
                 showErrorToast(e.message);
+                console.error(e);
             } finally {
                 setIsRetrievingCtc(false);
             }
@@ -76,6 +78,7 @@ export default function AcceptOrder () {
             navigate(`/seller/track/${ctcInfo}`);
         } catch (e) {
             showErrorToast(e.message);
+            console.error(e);
         } finally {
             setIsSubmit(false);
         }
@@ -92,6 +95,7 @@ export default function AcceptOrder () {
             updateContractViews();
         } catch (e) {
             showErrorToast(e.message);
+            console.error(e);
         }
 
         setIsSubmitting(false);

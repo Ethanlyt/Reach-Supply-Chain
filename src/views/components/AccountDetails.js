@@ -34,6 +34,7 @@ export default function AccountDetails() {
                 setStandardUnit(stdlib.standardUnit);
             } catch (e) {
                 showErrorToast( e.message || 'Unable to retrieve information about your wallet account');
+                console.error(e);
             } finally {
                 setIsLoading(false);
             }

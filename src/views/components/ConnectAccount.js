@@ -26,8 +26,9 @@ export default function ConnectAccount({ setIsConnectingAccount }) {
                 showSuccessToast("Account successfully connected: " + acc.getAddress() );
                 setAccount(acc);
             } 
-            catch (err) {
-                showErrorToast( err.message || 'Unable to connect to your wallet');
+            catch (e) {
+                showErrorToast( e.message || 'Unable to connect to your wallet');
+                console.error(e);
             } finally {
                 if (setIsConnectingAccount) setIsConnectingAccount(false);
             }

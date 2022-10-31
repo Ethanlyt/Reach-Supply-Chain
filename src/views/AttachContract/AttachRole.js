@@ -55,7 +55,8 @@ export default function AttachRole() {
             else return navigate(`/view/${encodeURI(ctcInfoInput)}`);
         }
         catch (e) {
-            showErrorToast(e.message) 
+            showErrorToast(e.message);
+            console.error(e);
         } finally {
             setIsLoading(false);
         }

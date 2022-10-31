@@ -8,7 +8,6 @@
 import React, { useContext, useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Card, CardContent, Typography } from "@mui/material";
-import QRCode from 'qrcode';
 
 import SnackbarContext from "../../context/SnackbarContext";
 import AppContext from "../../context/AppContext";
@@ -17,21 +16,14 @@ import Title from "../components/Title";
 import ContractDetailsTable from "../components/ContractDetailsTable";
 import StateStepper from "../components/StateStepper";
 import Loading from "../components/Loading";
-
-import { getContractViews, getContractHandler, buyerDelivered, getAppLink } from "../../Util";
 import ConnectAccount from "../components/ConnectAccount";
 
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 
-var opts = {
-    errorCorrectionLevel: 'H',
-    type: 'image/jpeg',
-    quality: 0.3,
-    margin: 1,
-    color: {
-        dark: "#000000",
-        light: "#FFFFFFFF"
-    }
-}
+import { getContractViews, getContractHandler, buyerDelivered, getAppLink, getQrCodeDataUrl } from "../../Util";
+
+
+
 
 export default function BuyerTrack() {
     const navigate = useNavigate();
@@ -42,7 +34,6 @@ export default function BuyerTrack() {
 
     const [isRetrievingCtc, setIsRetrievingCtc] = useState(false);
     const [isSubmittingDelivered, setIsSubmittingDelivered] = useState(false);
-    const [url, setUrl] = useState("");
     const [ctc, setCtc] = useState({});
     const [res, setRes] = useState({});
     const [qr, setQR] = useState("");
@@ -53,8 +44,9 @@ export default function BuyerTrack() {
 
         try {
             setRes(await getContractViews({ ctc }));
-        } catch (err) {
-            showErrorToast(err.message || "Unable to retrieve contract views");
+        } catch (e) {
+            showErrorToast(e.message || "Unable to retrieve contract views");
+            console.error(e);
         } finally {
             setIsRetrievingCtc(false);
         }
@@ -70,18 +62,12 @@ export default function BuyerTrack() {
             await updateContractViews(ctc);
         } catch (e) {
             showErrorToast(e.message);
+            console.error(e);
         } finally {
             setIsSubmittingDelivered(false);
         }
     }
 
-    const generateQR = async (url) => {
-        try {
-            return QRCode.toDataURL(url, opts);
-        } catch (err) {
-            return showErrorToast("Unable to generate QR code");
-        }
-    }
 
     useEffect(() => {
         if (!account) return showErrorToast("No account connected. You have to connect to your account to perform actions.");
@@ -95,10 +81,12 @@ export default function BuyerTrack() {
                 const ctc = await getContractHandler(account, ctcInfo);
                 setCtc(ctc);
                 await updateContractViews(ctc);
-                setUrl(`${ getAppLink() }${ encodeURI(ctcInfo) }`);
-                setQR(await generateQR(`${getAppLink()}seller/order/${ctcInfo}`));
+
+                const url = `${ getAppLink() }view/${ encodeURI(ctcInfo) }`;
+                setQR(await getQrCodeDataUrl(url));
             } catch (e) {
                 showErrorToast(e.message);
+                console.error(e);
             }
         })();
         
@@ -128,8 +116,15 @@ export default function BuyerTrack() {
             <Loading message="Approving delivery" />
             :
             res.state === 1 &&
-            <Button variant="contained" color="primary" className='mt-4' onClick={onReceivedButtonClick}>
+            <Button 
+                variant="contained" 
+                color="primary" 
+                className='mt-4' 
+                onClick={onReceivedButtonClick}
+                size="large"
+            >
                 Confirm Order Received
+                <LocalShippingIcon sx={{ ml: 1 }} />
             </Button>
         }
 
@@ -154,10 +149,12 @@ export default function BuyerTrack() {
 
                 <Card sx={{ minWidth: 175, height: 280 }}>
                     <CardContent>
-                        <img
-                            src={qr} 
-                            alt='QR to view contract details'
-                        />
+                        {
+                            qr ?
+                            <img src={qr} alt="QR Code" />
+                            :
+                            <Loading message="Generating QR Code" />
+                        }
                     </CardContent>
                 </Card>
 

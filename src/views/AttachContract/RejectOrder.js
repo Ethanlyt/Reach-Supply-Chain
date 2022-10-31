@@ -41,6 +41,7 @@ export default function RejectOrder() {
                 setCtc(res);
             } catch (e) {
                 showErrorToast(e.message);
+                console.error(e);
             } finally {
                 setIsRetrievingCtc(false);
             }
@@ -56,6 +57,7 @@ export default function RejectOrder() {
             await supplierReject(ctc, reason);
         } catch (e) {
             showErrorToast(e.message);
+            console.error(e);
         } finally {
             setIsFinish(true);
             setIsSubmit(false);

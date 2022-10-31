@@ -15,7 +15,7 @@ import ViewTree from "./ViewTree";
 import FeedIcon from '@mui/icons-material/Feed';
 import WidgetsIcon from '@mui/icons-material/Widgets';
 
-import { getContractViews } from "../../Util";
+import { getContractViews, parseAddress } from "../../Util";
 
 
 
@@ -36,12 +36,13 @@ export default function ViewAttach() {
 
 
 
-    // Given a list of contract address (Information), fetch all of its children and update to contracts(and parents)
+    // Given a list of contract address (Information), fetch all of its children
+    // and update to contracts(and parents)
     const fetchChildren = useCallback(async (list, currentCtc)=> {
         setIsChildrenLoading(true);
 
         for (let ing of list) {
-            if (ing === currentCtc) continue;
+            if ( parseAddress(ing) === currentCtc ) continue;
             const view = await getContractViews({ account: account, ctcInfo: ing });
             
             setContracts(prev => ({ ...prev, [ing]: view }) );
@@ -56,7 +57,7 @@ export default function ViewAttach() {
     // When the url parameter's ctcInfo is changed, we need to update the currentCtc, as the root ctc has changed too
     useEffect(()=> {
         if (!ctcInfo) navigate('/view/attach');
-        setCurrentCtc(ctcInfo);
+        setCurrentCtc( parseAddress(ctcInfo) );
     }, [account, ctcInfo, navigate]);
 
 

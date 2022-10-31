@@ -4,6 +4,8 @@ import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDiss
 
 import AppContext from "../context/AppContext";
 
+import { getAppLink } from "../Util";
+
 
 export default function Error() {
 
@@ -18,7 +20,7 @@ export default function Error() {
 
         <p className='text-center lead fs-5'> { detail } </p>
 
-        <Button variant="contained" size='large' onClick={ ()=> window.location.href = process.env.PUBLIC_URL }>
+        <Button variant="contained" size='large' onClick={ ()=> window.location.href = getAppLink() }>
             Refresh
         </Button>
     </>;

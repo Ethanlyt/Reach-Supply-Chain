@@ -32,6 +32,7 @@ export default function SellerTrack () {
             showSuccessToast(`Contract retrieved successfully`);
         } catch (e) {
             showErrorToast(e.message);
+            console.error(e);
         } finally {
             setIsLoading(false);
         }
@@ -48,6 +49,7 @@ export default function SellerTrack () {
                 updateContractViews(ctc);
             } catch (e) {
                 showErrorToast(e.message);
+                console.error(e);
             }
         })();
     }, [account, ctcInfo, navigate, showErrorToast, updateContractViews]);

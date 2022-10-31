@@ -6,6 +6,13 @@
 
 import { loadStdlib, ALGO_MyAlgoConnect } from "@reach-sh/stdlib";
 import * as backend from "./reach-backend/index.main.mjs";
+import QrCode from "qrcode";
+
+
+const QRCODE_OPTIONS = {
+    errorCorrectionLevel: 'H',
+    type: 'image/jpeg',
+}
 
 
 export const STATE_COLORS = {
@@ -26,7 +33,7 @@ export const CONTRACT_STATES = {
 
 export const stdlib = loadStdlib({
     ...process.env,
-    // 'REACH_CONNECTOR_MODE': 'ALGO',
+    'REACH_CONNECTOR_MODE': 'ALGO',
 });
 
 stdlib.setWalletFallback(stdlib.walletFallback({
@@ -39,6 +46,12 @@ stdlib.setWalletFallback(stdlib.walletFallback({
 export function getAppLink() {
     const { REACT_APP_DEV_URL, REACT_APP_PROD_LINK } = process.env;
     return process.env.NODE_ENV === 'development' ? REACT_APP_DEV_URL : REACT_APP_PROD_LINK;
+}
+
+
+// Get a QR code in the form of Data URL, which can be set as <img>'s src attribute
+export async function getQrCodeDataUrl(data) {
+    return await QrCode.toDataURL(data, QRCODE_OPTIONS);
 }
 
 
@@ -90,9 +103,11 @@ export function parseAddress(address) {
     try { address = JSON.parse(address); } 
     catch (e) {}
 
-    if (typeof address === 'string') return address;
+    const type = typeof address;
+    if (type === 'string' || type === 'number') return address;
     if (address.type === 'BigNumber') return address.hex;
     if (address._isBigNumber) return address._hex;
+
     throw new Error("Unknown address type: " + address);
 }
 

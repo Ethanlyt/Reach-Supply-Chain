@@ -31,6 +31,7 @@ export default function Order() {
             setRes(await getContractViews({ account: account, ctcInfo: ctcInfo }));
         } catch (e) {
             showErrorToast(e.message);
+            console.error(e);
         }
 
         showSuccessToast(`Contract retrieve successfully`);
@@ -50,6 +51,7 @@ export default function Order() {
                 setCtc(res);
             } catch (e) {
                 showErrorToast(e.message);
+                console.error(e);
             }
         })();
     }, [account, ctcInfo, navigate, showErrorToast]);
