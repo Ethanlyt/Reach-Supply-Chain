@@ -6,6 +6,13 @@
 
 import { loadStdlib, ALGO_MyAlgoConnect } from "@reach-sh/stdlib";
 import * as backend from "./reach-backend/index.main.mjs";
+import QrCode from "qrcode";
+
+
+const QRCODE_OPTIONS = {
+    errorCorrectionLevel: 'H',
+    type: 'image/jpeg',
+}
 
 
 export const STATE_COLORS = {
@@ -26,7 +33,7 @@ export const CONTRACT_STATES = {
 
 export const stdlib = loadStdlib({
     ...process.env,
-    // 'REACH_CONNECTOR_MODE': 'ALGO',
+    'REACH_CONNECTOR_MODE': 'ALGO',
 });
 
 stdlib.setWalletFallback(stdlib.walletFallback({
@@ -39,6 +46,12 @@ stdlib.setWalletFallback(stdlib.walletFallback({
 export function getAppLink() {
     const { REACT_APP_DEV_URL, REACT_APP_PROD_LINK } = process.env;
     return process.env.NODE_ENV === 'development' ? REACT_APP_DEV_URL : REACT_APP_PROD_LINK;
+}
+
+
+// Get a QR code in the form of Data URL, which can be set as <img>'s src attribute
+export async function getQrCodeDataUrl(data) {
+    return await QrCode.toDataURL(data, QRCODE_OPTIONS);
 }
 
 
@@ -71,6 +84,27 @@ export function parseCurrency(amount) {
 }
 
 
+// From URL, tries to extract the portion containing the contract address
+// The available URL formats are only the ones defined in the regex
+export function extractContractInfoFromUrl(url) {
+    url = decodeURI(url);
+
+    for (let regex of [
+        /view\/(.*)/g,
+        /seller\/order\/(.*)/g,
+    ]) {
+        const match = regex.exec(url);
+        if (!match || !match[1]) continue;
+        
+        let ctcInfo = match[1];
+        try { ctcInfo = JSON.parse(ctcInfo) }
+        catch (e) {}
+
+        return parseAddress(ctcInfo);
+    }
+}
+
+
 // Get balance of provided account (address)
 export async function getBalance(account) {
     return formatCurrency(await stdlib.balanceOf(account) );
@@ -90,9 +124,11 @@ export function parseAddress(address) {
     try { address = JSON.parse(address); } 
     catch (e) {}
 
-    if (typeof address === 'string') return address;
+    const type = typeof address;
+    if (type === 'string' || type === 'number') return address;
     if (address.type === 'BigNumber') return address.hex;
     if (address._isBigNumber) return address._hex;
+
     throw new Error("Unknown address type: " + address);
 }
 

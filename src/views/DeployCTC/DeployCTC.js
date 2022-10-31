@@ -44,8 +44,9 @@ export default function DeployCTC () {
 
             showSuccessToast(`Contract deployed successfully : ${ parseAddress(ctcInfo) }`);
             navigate(`/buyer/detail/${encodeURI(ctcInfo)}`);
-        } catch (error) {
-            showErrorToast(error.message);
+        } catch (e) {
+            showErrorToast(e.message);
+            console.error(e);
         } finally {
             setIsSubmit(true);
         }

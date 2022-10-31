@@ -35,8 +35,9 @@ export default function NavBar() {
             showSuccessToast("Account successfully connected: " + acc.getAddress());
             setAccount(acc);
         }
-        catch (err) {
-            setError({ title: 'Error connecting account', detail: err.message || "Unable to connect to your wallet" });
+        catch (e) {
+            setError({ title: 'Error connecting account', detail: e.message || "Unable to connect to your wallet" });
+            console.error(e);
             navigate('/error');
         }
     }

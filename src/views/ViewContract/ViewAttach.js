@@ -25,7 +25,10 @@ export default function ViewAttach() {
         try { 
             parseAddress(ctcInfoInput)
         } 
-        catch (e) { return showErrorToast(e.message) }
+        catch (e) { 
+            console.error(e);
+            return showErrorToast(e.message);
+        }
         setIsLoading(false);
 
         showSuccessToast(`Displaying contract: ${ctcInfoInput}`);
