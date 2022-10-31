@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Title from "../components/Title";
 import ContractDetailsTable from "../components/ContractDetailsTable";
 import StateStepper from "../components/StateStepper";
-
+import ConnectAccount from "../components/ConnectAccount";
 import AppContext from "../../context/AppContext";
 import SnackbarContext from "../../context/SnackbarContext";
 
@@ -53,7 +53,7 @@ export default function SellerTrack () {
     }, [account, ctcInfo, navigate, showErrorToast, updateContractViews]);
 
 
-
+    if (!account) return <ConnectAccount />
 
     return <>
         <Title />

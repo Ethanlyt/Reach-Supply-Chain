@@ -19,10 +19,9 @@ export default function ViewAttach() {
     const { showErrorToast, showSuccessToast } = useContext(SnackbarContext);
 
     const onSubmit = async ()=> {
+        if (!ctcInfoInput) return showErrorToast("Please fill in the required information");
         setIsLoading(true)
        
-        if (!ctcInfoInput) return showErrorToast('Please enter the contract information');
-
         try { 
             parseAddress(ctcInfoInput)
         } 
