@@ -9,7 +9,7 @@ import React, {useContext, useState, useEffect } from 'react';
 import { Typography, Card, CardContent, Button } from "@mui/material";
 import { useNavigate, useParams } from 'react-router-dom';
 import { saveAs } from 'file-saver';
-
+import QRCode from 'qrcode';
 import AppContext from '../../context/AppContext';
 import SnackbarContext from '../../context/SnackbarContext';
 
@@ -19,7 +19,16 @@ import ContractDetailsTable from '../components/ContractDetailsTable';
 
 import { getContractHandler, getContractViews, getAppLink } from "../../Util"
 
-
+var opts = {
+    errorCorrectionLevel: 'H',
+    type: 'image/jpeg',
+    quality: 0.3,
+    margin: 1,
+    color: {
+        dark: "#000000",
+        light: "#FFFFFFFF"
+    }
+}
 
 export default function ContractDetail () {
     const { account } = useContext(AppContext);
@@ -31,8 +40,8 @@ export default function ContractDetail () {
     const [isLoading, setIsLoading] = useState(false);
     const [url, setUrl] = useState("");
     const [ctcViews, setCtcViews] = useState({});
-
-
+    const [qr, setQR] = useState("")
+    
 
     // Copies the link to clipboard
     const handleShareLink = () => {
@@ -40,9 +49,17 @@ export default function ContractDetail () {
         showSuccessToast("Link Copied to Clipboard, please share link to the seller");
     }
     
+    const generateQR = async (url) => {
+        try {
+            return QRCode.toDataURL(url, opts);
+        } catch (err) {
+            return showErrorToast("Unable to generate QR code");
+        }
+    }
+
     // Downloads the QR code image
     const handleShareQR = () => {
-        saveAs(`https://api.qrserver.com/v1/create-qr-code/?data=${url}&size=150x150`,'source-smart-qr.jpg');
+        saveAs(qr,'source-smart-qr.jpg');
         showSuccessToast("Saved QR, please share QR to the seller");
     }
 
@@ -65,6 +82,8 @@ export default function ContractDetail () {
                 setCtcViews(await getContractViews({ ctc }));
                 showSuccessToast("Contract information retrieved successfully");
                 setUrl(`${ getAppLink() }seller/order/${ctcInfo}`);
+                // const qrInfo = await generateQR();
+                setQR(await generateQR(`${getAppLink()}seller/order/${ctcInfo}`));
             } catch (e) {
                 showErrorToast(e.message);
             } finally {
@@ -76,6 +95,7 @@ export default function ContractDetail () {
 
 
     return <>
+    {console.log(qr)}
         <Title />
         <AccountDetails />
 
@@ -125,7 +145,7 @@ export default function ContractDetail () {
                 <Card sx={{ minWidth: 175, mb: 2, flex: 1 }}>
                 <CardContent>
                     <img 
-                        src={`https://api.qrserver.com/v1/create-qr-code/?data=${url}&size=125x125`} 
+                        src={qr} 
                         alt='QR for seller to attach' 
                     />
                 </CardContent>
