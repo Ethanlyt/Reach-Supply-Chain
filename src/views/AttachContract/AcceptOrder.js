@@ -1,13 +1,13 @@
-import React, { useState, useContext,useCallback, useEffect} from "react";
+import React, { useState, useContext, useCallback, useEffect } from "react";
 import { Button, Typography, TextField, Card, CardContent, ButtonGroup } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import QrReader from 'react-qr-scanner'
 
 import Title from "../components/Title";
 import ContractDetailsTable from "../components/ContractDetailsTable";
 import Loading from "../components/Loading";
 import ConnectAccount from "../components/ConnectAccount";
 import AccountDetails from "../components/AccountDetails";
+import QrCodeScanner from "../components/QRCodeScanner";
 
 import SnackbarContext from "../../context/SnackbarContext";
 import AppContext from "../../context/AppContext";
@@ -22,8 +22,8 @@ import { getContractHandler, getContractViews , supplierAddIngredient, supplierA
 
 export default function AcceptOrder () {
     const navigate = useNavigate();
-
     const { ctcInfo } = useParams();
+
     const { account } = useContext(AppContext);
     const { showErrorToast, showSuccessToast } = useContext(SnackbarContext);
    
@@ -44,13 +44,13 @@ export default function AcceptOrder () {
 
         try {
             setRes(await getContractViews({ account: account, ctcInfo: ctcInfo }));
+            showSuccessToast(`Contract retrieved successfully`);
         } catch (e) {
             showErrorToast(e.message);
             console.error(e);
+        } finally {
+            setIsLoading(false);
         }
-
-        showSuccessToast(`Contract retrieved successfully`);
-        setIsLoading(false);
     }, [showErrorToast, account, ctcInfo, showSuccessToast]);
 
 
@@ -82,23 +82,27 @@ export default function AcceptOrder () {
         } catch (e) {
             showErrorToast(e.message);
             console.error(e);
+        } finally {
+            setIsSubmitting(false);
         }
-
-        setIsSubmitting(false);
     }
 
 
-    const onQrError = (e)=> {
-        showErrorToast("Error scanning QR code: " + e.message);
+
+    const onQrError = useCallback((e) => {
+        if (e === 'No QR code found') return;
+
+        showErrorToast("Error scanning QR code: " + e);
         console.error(e);
         setIsScanningQr(false);
-    }
+    }, [showErrorToast]);
 
-    const onQrScanned = (data) => {
-        if (!data || !data.text) return;
+
+    const onQrDecode = useCallback((data)=> {
+        if (!data || !data.data) return;
 
         setIsScanningQr(false);
-        const ctcInfo = extractContractInfoFromUrl(data.text);
+        const ctcInfo = extractContractInfoFromUrl(data.data);
 
         if (!ctcInfo) {
             showErrorToast("QR code detected but no contract found. See console for QR details");
@@ -108,7 +112,7 @@ export default function AcceptOrder () {
             showSuccessToast("QR code scanned successfully. Contract: " + ctcInfo);
             setIngredientToAdd(ctcInfo);
         }
-    }
+    }, [showErrorToast, showSuccessToast]);
 
 
 
@@ -129,6 +133,7 @@ export default function AcceptOrder () {
         })();
     }, [ctcInfo, account, navigate, showErrorToast, setIsRetrievingCtc]);
     
+
     useEffect(() => {
         if (!ctc) return;
         updateContractViews();
@@ -139,6 +144,7 @@ export default function AcceptOrder () {
     if (!account) return <ConnectAccount />
     if (isRetrievingCtc) return <Loading message="Retrieving contract" />
 
+    
     return <>
         <Title />
         <AccountDetails />
@@ -176,18 +182,11 @@ export default function AcceptOrder () {
             :
             isScanningQr ?
             <>
-                <QrReader
-                    style={{
-                        minHeight: 200,
-                        minWidth: 280,
-                    }}
-                    facingMode='rear'
-                    constraints={
-                        (window.innerWidth > 768) ? undefined : { video: { facingMode: { exact: `environment` } } }
-                    }
-                    onError={onQrError}
-                    onScan={onQrScanned}
+                <QrCodeScanner
+                    onDecode={onQrDecode}
+                    onDecodeError={onQrError}
                 />
+
                 <Button color="primary" variant="contained" sx={{ mt: 2 }} onClick={()=> setIsScanningQr(false)}>
                     Cancel
                     <CancelOutlinedIcon sx={{ ml: 1 }} />
