@@ -181,6 +181,7 @@ export default function AcceptOrder () {
                         minHeight: 200,
                         minWidth: 280,
                     }}
+                    facingMode='rear'
                     onError={onQrError}
                     onScan={onQrScanned}
                 />
