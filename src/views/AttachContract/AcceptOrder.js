@@ -90,7 +90,7 @@ export default function AcceptOrder () {
 
 
     const onQrError = useCallback((e) => {
-        if (''.indexOf('No QR code found') >= 0) return;
+        if (e.indexOf('No QR code found') >= 0) return;
 
         showErrorToast("Error scanning QR code: " + e);
         console.error(e);
