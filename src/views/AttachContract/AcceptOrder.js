@@ -182,6 +182,9 @@ export default function AcceptOrder () {
                         minWidth: 280,
                     }}
                     facingMode='rear'
+                    constraints={
+                        (window.innerWidth > 768) ? undefined : { video: { facingMode: { exact: `environment` } } }
+                    }
                     onError={onQrError}
                     onScan={onQrScanned}
                 />
